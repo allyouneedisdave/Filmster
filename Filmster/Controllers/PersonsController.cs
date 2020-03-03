@@ -10,45 +10,44 @@ using Filmster.Models;
 
 namespace Filmster.Controllers
 {
-    public class FilmsController : Controller
+    public class PersonsController : Controller
     {
         private DBContext db = new DBContext();
 
-        // GET: Films
+        // GET: Persons
         public ActionResult Index()
         {
-            return View(db.Films.ToList());
+            return View(db.Persons.ToList());
         }
 
-        // GET: Films/Details/5
+        // GET: Persons/Details/5
         public ActionResult Details(int? id)
         {
             if (id == null)
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
-            Film film = db.Films.Find(id);
-            if (film == null)
+            Person person = db.Persons.Find(id);
+            if (person == null)
             {
                 return HttpNotFound();
             }
-            return View(film);
+            return View(person);
         }
 
-        // GET: Films/Create
+        // GET: Persons/Create
         public ActionResult Create()
         {
             return View();
         }
 
-        // POST: Films/Create
+        // POST: Persons/Create
         // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
         // more details see https://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Create(
-            [Bind(Include = "FilmID,GenreID,CertificateID,ImageID," +
-            "Title,Synopsis,Runtime,ReleaseDate")] Film film,
+        public ActionResult Create([Bind(Include = "PersonId,ImageId,FirstName,LastName," +
+            "IsActor,IsDirector,Biography")] Person person,
             HttpPostedFileBase upload)
         {
             //if we have valid data in the form
@@ -57,14 +56,14 @@ namespace Filmster.Controllers
                 //check to see if a file has been uploaded
                 if (upload != null && upload.ContentLength > 0)
                 {
-                    //check to see if valid MIME type (JPG / PNG or GIF images)
+                    //check to see if a file has been uploaded
                     if (upload.ContentType == "image/jpeg" ||
                         upload.ContentType == "image/jpg" ||
                         upload.ContentType == "image/gif" ||
                         upload.ContentType == "image/png")
                     {
-                        //DO SOMETHING WITH THE FILE
-                        //CREATE A METHOD TO CONVERT TO BLOB
+                        //DO SOMETHING WITH THE FILEPATH
+                        //CONVERT IMAGE TO BLOB
                     }
                     else
                     {
@@ -72,70 +71,89 @@ namespace Filmster.Controllers
                         ViewBag.Message = "Not valid image format";
                     }
                 }
-                //add the film to the database and save
-
-                db.Films.Add(film);
+                //add the person to the database and save
+                db.Persons.Add(person);
                 db.SaveChanges();
-                //redirect to index
                 return RedirectToAction("Index");
             }
 
-            return View(film);
+            return View(person);
         }
 
-        // GET: Films/Edit/5
+        // GET: Persons/Edit/5
         public ActionResult Edit(int? id)
         {
             if (id == null)
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
-            Film film = db.Films.Find(id);
-            if (film == null)
+            Person person = db.Persons.Find(id);
+            if (person == null)
             {
                 return HttpNotFound();
             }
-            return View(film);
+            return View(person);
         }
 
-        // POST: Films/Edit/5
+        // POST: Persons/Edit/5
         // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
         // more details see https://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Edit([Bind(Include = "FilmID,GenreID,CertificateID,ImageID,Title,Synopsis,Runtime,ReleaseDate")] Film film)
+        public ActionResult Edit([Bind(Include = "PersonId,ImageId,FirstName," +
+            "LastName,IsActor,IsDirector,Biography")] Person person,
+            HttpPostedFileBase upload)
         {
             if (ModelState.IsValid)
             {
-                db.Entry(film).State = EntityState.Modified;
+                //check to see if a file has been uploaded
+                if (upload != null && upload.ContentLength > 0)
+                {
+                    //check to see if a file has been uploaded
+                    if (upload.ContentType == "image/jpeg" ||
+                        upload.ContentType == "image/jpg" ||
+                        upload.ContentType == "image/gif" ||
+                        upload.ContentType == "image/png")
+                    {
+                        //DO SOMETHING WITH THE FILEPATH
+                        //CONVERT IMAGE TO BLOB
+                    }
+                    else
+                    {
+                        //construct a message that can be displayed in the view
+                        ViewBag.Message = "Not valid image format";
+                    }
+                }
+
+                db.Entry(person).State = EntityState.Modified;
                 db.SaveChanges();
                 return RedirectToAction("Index");
             }
-            return View(film);
+            return View(person);
         }
 
-        // GET: Films/Delete/5
+        // GET: Persons/Delete/5
         public ActionResult Delete(int? id)
         {
             if (id == null)
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
-            Film film = db.Films.Find(id);
-            if (film == null)
+            Person person = db.Persons.Find(id);
+            if (person == null)
             {
                 return HttpNotFound();
             }
-            return View(film);
+            return View(person);
         }
 
-        // POST: Films/Delete/5
+        // POST: Persons/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
         public ActionResult DeleteConfirmed(int id)
         {
-            Film film = db.Films.Find(id);
-            db.Films.Remove(film);
+            Person person = db.Persons.Find(id);
+            db.Persons.Remove(person);
             db.SaveChanges();
             return RedirectToAction("Index");
         }

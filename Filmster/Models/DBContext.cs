@@ -9,5 +9,7 @@ namespace Filmster.Models
     public class DBContext : DbContext
     {
         public DbSet<Film> Films { get; set; }
+
+        public DbSet<Person> Persons { get; set; }
     }
 }
