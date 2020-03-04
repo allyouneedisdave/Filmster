@@ -10,6 +10,7 @@ namespace Filmster.Models
     [Table("PERSON")]
     public class Person
     {
+        [Key]
         [Column("person_id")]
         public int? PersonId { get; set; }
 

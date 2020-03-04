@@ -10,14 +10,15 @@ namespace Filmster.Models
     [Table("FILM")]
     public class Film
     {
+        [Key]
         [Column("film_id")]
-        public int? FilmID { get; set; }
+        public int? FilmId { get; set; }
         [Column("genre_id")]
-        public int? GenreID { get; set; }
+        public int? GenreId { get; set; }
         [Column("certificate_id")]
-        public int? CertificateID { get; set; }
+        public int? CertificateId { get; set; }
         [Column("image_Id")]
-        public int? ImageID { get; set; }
+        public int? ImageId { get; set; }
 
 
 

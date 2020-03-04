@@ -1,0 +1,50 @@
+﻿@model Filmster.Models.FilmPersonRole
+
+@{
+    ViewBag.Title = "Details";
+}
+
+<h2>Details</h2>
+
+<div>
+    <h4>FilmPersonRole</h4>
+    <hr />
+    <dl class="dl-horizontal">
+        <dt>
+            @Html.DisplayNameFor(model => model.PersonId)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.PersonId)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.FilmId)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.FilmId)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.IsActor)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.IsActor)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.IsDirector)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.IsDirector)
+        </dd>
+
+    </dl>
+</div>
+<p>
+    @Html.ActionLink("Edit", "Edit", new { id = Model.RoleId }) |
+    @Html.ActionLink("Back to List", "Index")
+</p>

@@ -11,5 +11,7 @@ namespace Filmster.Models
         public DbSet<Film> Films { get; set; }
 
         public DbSet<Person> Persons { get; set; }
+
+        public DbSet<FilmPersonRole> FilmPersonRoles { get; set; }
     }
 }

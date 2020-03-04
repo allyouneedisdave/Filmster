@@ -12,13 +12,13 @@
 <table class="table">
     <tr>
         <th>
-            @Html.DisplayNameFor(model => model.GenreID)
+            @Html.DisplayNameFor(model => model.GenreId)
         </th>
         <th>
-            @Html.DisplayNameFor(model => model.CertificateID)
+            @Html.DisplayNameFor(model => model.CertificateId)
         </th>
         <th>
-            @Html.DisplayNameFor(model => model.ImageID)
+            @Html.DisplayNameFor(model => model.ImageId)
         </th>
         <th>
             @Html.DisplayNameFor(model => model.Title)
@@ -38,13 +38,13 @@
 @foreach (var item in Model) {
     <tr>
         <td>
-            @Html.DisplayFor(modelItem => item.GenreID)
+            @Html.DisplayFor(modelItem => item.GenreId)
         </td>
         <td>
-            @Html.DisplayFor(modelItem => item.CertificateID)
+            @Html.DisplayFor(modelItem => item.CertificateId)
         </td>
         <td>
-            @Html.DisplayFor(modelItem => item.ImageID)
+            @Html.DisplayFor(modelItem => item.ImageId)
         </td>
         <td>
             @Html.DisplayFor(modelItem => item.Title)
@@ -59,9 +59,9 @@
             @Html.DisplayFor(modelItem => item.ReleaseDate)
         </td>
         <td>
-            @Html.ActionLink("Edit", "Edit", new { id=item.FilmID }) |
-            @Html.ActionLink("Details", "Details", new { id=item.FilmID }) |
-            @Html.ActionLink("Delete", "Delete", new { id=item.FilmID })
+            @Html.ActionLink("Edit", "Edit", new { id=item.FilmId }) |
+            @Html.ActionLink("Details", "Details", new { id=item.FilmId }) |
+            @Html.ActionLink("Delete", "Delete", new { id=item.FilmId })
         </td>
     </tr>
 }

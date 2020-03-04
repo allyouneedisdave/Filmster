@@ -1,0 +1,46 @@
+﻿@model IEnumerable<Filmster.Models.ViewModels.FilmPersonRoleViewModel>
+
+@{
+    ViewBag.Title = "Index";
+}
+
+<h2>Index</h2>
+
+<p>
+    @Html.ActionLink("Create New", "Create")
+</p>
+<table class="table">
+    <tr>
+        <th>
+            @Html.DisplayNameFor(model => model.ThisFilm.Title)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.ThisPerson.FirstName)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.ThisPerson.LastName)
+        </th>
+
+        <th></th>
+    </tr>
+
+@foreach (var item in Model) {
+    <tr>
+        <td>
+            @Html.DisplayFor(modelItem => item.ThisFilm.Title)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.ThisPerson.FirstName)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.ThisPerson.LastName)
+        </td>
+
+        <td>
+            @Html.ActionLink("Edit", "Edit", new { id=item.ThisFilmPersonRole.RoleId }) |       
+            @Html.ActionLink("Delete", "Delete", new { id=item.ThisFilmPersonRole.RoleId })
+        </td>
+    </tr>
+}
+
+</table>
