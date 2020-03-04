@@ -69,8 +69,56 @@ namespace Filmster.Controllers
         }
 
         // GET: FilmPersonRoles/Create
-        public ActionResult Create()
+        public ActionResult Create(int FilmId = 0, int PersonId = 0)
         {
+            //FILMS -------------------------------------------------------------------
+            //from the Films model DbSet
+            //select all columns from the database
+            //orderby the film title
+            var filmQuery = from m in db.Films
+                            orderby m.Title
+                            select m;
+            //if no id set
+            if (FilmId == 0)
+            {
+                //construct full films dropdown list without preselection
+                //do so from the query results and display the film title
+                //store in FilmId in the ViewBag
+                ViewBag.FilmId = new SelectList(filmQuery, "FilmId", "Title", null);
+            }
+            else
+            {
+                //construct as above but with the FilmId preselected
+                ViewBag.FilmId = new SelectList(filmQuery, "FilmId", "Title", FilmId);
+            }
+
+            //PERSONS -----------------------------------------------------------------
+            //from the Persons model DbSet
+            //select the firstname and lastname as a new field called Name
+            //and the person id - order by the last name
+            var personsQuery = from p in db.Persons
+                               orderby p.LastName
+                               select new
+                               {
+                                   Name = p.FirstName + " " + p.LastName,
+                                   p.PersonId
+                               };
+            //if no id set
+            if (PersonId == 0)
+            {
+                //construct full films dropdown list without preselection
+                //do so from the query results and display the Name (combined above)
+                //store in FilmId in the ViewBag
+                ViewBag.PersonId = new SelectList(personsQuery, "PersonId", "Name", null);
+            }
+            else
+            {
+                //construct as above but with the PersonId preselected
+                ViewBag.PersonId = new SelectList(personsQuery, "PersonId", "Name", PersonId);
+
+            }
+
+            //generate the view
             return View();
         }
 
@@ -103,6 +151,38 @@ namespace Filmster.Controllers
             {
                 return HttpNotFound();
             }
+
+            //code to generate dropdowns
+            //FILMS ---------------------------------------------------------------------------------------------
+            //from the Films model DbSet
+            //select all columns from the database
+            //orderby the film title
+            var filmQuery = from m in db.Films
+                            orderby m.Title
+                            select m;
+            //construct full films dropdown list preselected with the foreign key
+            //do so from the query results and display the Film Title
+            //store in FilmId in the ViewBag
+            ViewBag.FilmId = new SelectList(filmQuery, "FilmId", "Title", filmPersonRole.FilmId);
+
+
+            //PERSONS --------------------------------------------------------------------------------------------
+            //from the Persons model DbSet
+            //select the firstname and lastname as a new field called Name
+            //and the person id - order by the lastname
+            var personsQuery = from p in db.Persons
+                               orderby p.LastName
+                               select new
+                               {
+                                   Name = p.FirstName + " " + p.LastName,
+                                   p.PersonId
+                               };
+
+            //construct full films dropdown list preselected with the foreign key
+            //do so from the query results and display the Name (combined above)
+            //store in FilmId in the ViewBag
+            ViewBag.PersonId = new SelectList(personsQuery, "PersonId", "Name", filmPersonRole.PersonId);
+
             return View(filmPersonRole);
         }
 
