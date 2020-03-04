@@ -12,5 +12,11 @@ namespace Filmster.Models.ViewModels
         public Person ThisPerson;
 
         public Film ThisFilm;
+
+        public FilmImage ThisFilmImage;
+
+        public Genre ThisGenre;
+
+        public Certificate ThisCertificate;
     }
 }
