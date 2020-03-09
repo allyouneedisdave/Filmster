@@ -2,6 +2,8 @@
 using System.Collections.Generic;
 using System.Data;
 using System.Data.Entity;
+using System.Drawing;
+using System.IO;
 using System.Linq;
 using System.Net;
 using System.Web;
@@ -46,10 +48,38 @@ namespace Filmster.Controllers
         // more details see https://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Create([Bind(Include = "ImageId,ImageBytes")] FilmImage filmImage)
+        public ActionResult Create([Bind(Include = "ImageId,ImageBytes")] FilmImage filmImage,
+            HttpPostedFileBase upload)
         {
             if (ModelState.IsValid)
             {
+                if (upload != null && upload.ContentLength > 0)
+                {
+                    if (upload.ContentType == "image/jpeg" ||
+                        upload.ContentType == "image/jpg" ||
+                        upload.ContentType == "image/gif" ||
+                        upload.ContentType == "image/png")
+                    {
+                        if (Request.Files.Count > 0)
+                        {
+                            var file = Request.Files[0];
+                            {
+                                var fileName = Path.GetFileName(file.FileName);
+                                var path = Path.Combine(Server.MapPath("~/Images/"), fileName);
+                                file.SaveAs(path);
+
+                                Image newImage = Image.FromFile(path);
+
+                                filmImage.ImageBytes = filmImage.ConvertImageToByteArray(newImage);
+
+                            }
+                        }
+         
+                        
+                    }
+                }
+
+
                 db.FilmImages.Add(filmImage);
                 db.SaveChanges();
                 return RedirectToAction("Index");

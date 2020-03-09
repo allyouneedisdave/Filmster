@@ -15,8 +15,10 @@ namespace Filmster.Models
     {
         [Key]
         [Column("image_id")]
+        [Display(Name ="Image Id")]
         public int ImageId { get; set; }
 
+        [Display(Name = "Image")]
         [Column("image")]
         public byte[] ImageBytes { get; set; }
 
@@ -27,6 +29,7 @@ namespace Filmster.Models
             {
                 return ConvertByteArrayToImage(ImageBytes);
             }
+
         }
 
         //Convert an image into a byte array.
