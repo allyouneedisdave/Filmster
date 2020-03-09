@@ -133,6 +133,7 @@
     <Compile Include="App_Start\BundleConfig.cs" />
     <Compile Include="App_Start\FilterConfig.cs" />
     <Compile Include="App_Start\RouteConfig.cs" />
+    <Compile Include="Controllers\FilmImagesController.cs" />
     <Compile Include="Controllers\FilmPersonRolesController.cs" />
     <Compile Include="Controllers\FilmsController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
@@ -142,6 +143,7 @@
     </Compile>
     <Compile Include="Models\DBContext.cs" />
     <Compile Include="Models\Film.cs" />
+    <Compile Include="Models\FilmImage.cs" />
     <Compile Include="Models\FilmPersonRole.cs" />
     <Compile Include="Models\Person.cs" />
     <Compile Include="Models\ViewModels\FilmPersonRoleViewModel.cs" />
@@ -198,6 +200,11 @@
     <Content Include="Views\FilmPersonRoles\Details.cshtml" />
     <Content Include="Views\FilmPersonRoles\Edit.cshtml" />
     <Content Include="Views\FilmPersonRoles\Index.cshtml" />
+    <Content Include="Views\FilmImages\Create.cshtml" />
+    <Content Include="Views\FilmImages\Delete.cshtml" />
+    <Content Include="Views\FilmImages\Details.cshtml" />
+    <Content Include="Views\FilmImages\Edit.cshtml" />
+    <Content Include="Views\FilmImages\Index.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
