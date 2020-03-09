@@ -12,138 +12,133 @@ using Filmster.Models;
 
 namespace Filmster.Controllers
 {
-    public class FilmImagesController : Controller
+    public class PersonImagesController : Controller
     {
         private DBContext db = new DBContext();
 
-        // GET: FilmImages
+        // GET: PersonImages
         public ActionResult Index()
         {
-            return View(db.FilmImages.ToList());
+            return View(db.PersonImages.ToList());
         }
 
-        // GET: FilmImages/Details/5
+        // GET: PersonImages/Details/5
         public ActionResult Details(int? id)
         {
             if (id == null)
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
-            FilmImage filmImage = db.FilmImages.Find(id);
-            if (filmImage == null)
+            PersonImage personImage = db.PersonImages.Find(id);
+            if (personImage == null)
             {
                 return HttpNotFound();
             }
-            return View(filmImage);
+            return View(personImage);
         }
 
-        // GET: FilmImages/Create
+        // GET: PersonImages/Create
         public ActionResult Create()
         {
             return View();
         }
 
-        // POST: FilmImages/Create
+        // POST: PersonImages/Create
         // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
         // more details see https://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Create([Bind(Include = "ImageId,ImageBytes")] FilmImage filmImage,
+        public ActionResult Create([Bind(Include = "ImageId,ImageBytes")] PersonImage personImage,
             HttpPostedFileBase upload)
         {
             if (ModelState.IsValid)
             {
-                if (upload != null && upload.ContentLength > 0)
-                {
-                    if (upload.ContentType == "image/jpeg" ||
+                if (upload.ContentType == "image/jpeg" ||
                         upload.ContentType == "image/jpg" ||
                         upload.ContentType == "image/gif" ||
                         upload.ContentType == "image/png")
+                {
+                    if (Request.Files.Count > 0)
                     {
-                        if (Request.Files.Count > 0)
+                        var file = Request.Files[0];
                         {
-                            var file = Request.Files[0];
+                            var fileName = Path.GetFileName(file.FileName);
+                            var path = Path.Combine(Server.MapPath("~/Images/"), fileName);
+                            file.SaveAs(path);
+
+                            Image newImage = Image.FromFile(path);
+
+                            personImage.ImageBytes = personImage.ConvertImageToByteArray(newImage);
+
+                            if (System.IO.File.Exists(path))
                             {
-                                var fileName = Path.GetFileName(file.FileName);
-                                var path = Path.Combine(Server.MapPath("~/ImagesTemp/"), fileName);
-                                file.SaveAs(path);
-
-                                Image newImage = Image.FromFile(path);
-
-                                filmImage.ImageBytes = filmImage.ConvertImageToByteArray(newImage);
-
-                                if (System.IO.File.Exists(path))
-                                {
-                                    System.IO.File.Delete(path);
-                                }
-
+                                System.IO.File.Delete(path);
                             }
-                        }                            
+                        }
                     }
                 }
 
-
-                db.FilmImages.Add(filmImage);
+                db.PersonImages.Add(personImage);
                 db.SaveChanges();
                 return RedirectToAction("Index");
             }
 
-            return View(filmImage);
+            return View(personImage);
         }
 
-        // GET: FilmImages/Edit/5
+        // GET: PersonImages/Edit/5
         public ActionResult Edit(int? id)
         {
             if (id == null)
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
-            FilmImage filmImage = db.FilmImages.Find(id);
-            if (filmImage == null)
+            PersonImage personImage = db.PersonImages.Find(id);
+            if (personImage == null)
             {
                 return HttpNotFound();
             }
-            return View(filmImage);
+            return View(personImage);
         }
 
-        // POST: FilmImages/Edit/5
+        // POST: PersonImages/Edit/5
         // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
         // more details see https://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Edit([Bind(Include = "ImageId,ImageBytes")] FilmImage filmImage)
+        public ActionResult Edit([Bind(Include = "ImageId,ImageBytes")] PersonImage personImage)
         {
             if (ModelState.IsValid)
             {
-                db.Entry(filmImage).State = EntityState.Modified;
+                db.Entry(personImage).State = EntityState.Modified;
                 db.SaveChanges();
                 return RedirectToAction("Index");
             }
-            return View(filmImage);
+            return View(personImage);
         }
 
-        // GET: FilmImages/Delete/5
+        // GET: PersonImages/Delete/5
         public ActionResult Delete(int? id)
         {
             if (id == null)
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
-            FilmImage filmImage = db.FilmImages.Find(id);
-            if (filmImage == null)
+            PersonImage personImage = db.PersonImages.Find(id);
+            if (personImage == null)
             {
                 return HttpNotFound();
             }
-            return View(filmImage);
+            return View(personImage);
         }
 
-        // POST: FilmImages/Delete/5
+        // POST: PersonImages/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
         public ActionResult DeleteConfirmed(int id)
         {
-            FilmImage filmImage = db.FilmImages.Find(id);
-            db.FilmImages.Remove(filmImage);
+            PersonImage personImage = db.PersonImages.Find(id);
+            db.PersonImages.Remove(personImage);
             db.SaveChanges();
             return RedirectToAction("Index");
         }

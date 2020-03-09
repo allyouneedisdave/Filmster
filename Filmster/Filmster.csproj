@@ -137,6 +137,7 @@
     <Compile Include="Controllers\FilmPersonRolesController.cs" />
     <Compile Include="Controllers\FilmsController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
+    <Compile Include="Controllers\PersonImagesController.cs" />
     <Compile Include="Controllers\PersonsController.cs" />
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
@@ -148,7 +149,9 @@
     <Compile Include="Models\FilmPersonRole.cs" />
     <Compile Include="Models\Genre.cs" />
     <Compile Include="Models\Person.cs" />
+    <Compile Include="Models\PersonImage.cs" />
     <Compile Include="Models\ViewModels\FilmPersonRoleViewModel.cs" />
+    <Compile Include="Models\ViewModels\FilmsViewModel.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
@@ -207,9 +210,15 @@
     <Content Include="Views\FilmImages\Details.cshtml" />
     <Content Include="Views\FilmImages\Edit.cshtml" />
     <Content Include="Views\FilmImages\Index.cshtml" />
+    <Content Include="Views\PersonImages\Create.cshtml" />
+    <Content Include="Views\PersonImages\Delete.cshtml" />
+    <Content Include="Views\PersonImages\Details.cshtml" />
+    <Content Include="Views\PersonImages\Edit.cshtml" />
+    <Content Include="Views\PersonImages\Index.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
+    <Folder Include="ImagesTemp\" />
     <Folder Include="Images\" />
   </ItemGroup>
   <ItemGroup>

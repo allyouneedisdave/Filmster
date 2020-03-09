@@ -1,4 +1,4 @@
-﻿@model IEnumerable<Filmster.Models.FilmImage>
+﻿@model IEnumerable<Filmster.Models.PersonImage>
 
 @{
     ViewBag.Title = "Index";
@@ -12,7 +12,7 @@
 <table class="table">
     <tr>
         <th>
-            @Html.DisplayNameFor(model => model.ImageBitmap)
+            @Html.DisplayNameFor(model => model.ImageBytes)
         </th>
         <th></th>
     </tr>
@@ -23,7 +23,7 @@
             @if (item.ImageBytes != null)
             {
                 //Convert the image bytes into a png for displaying on the page.
-            <img src="@String.Format("data:image/png;base64,{0}", Convert.ToBase64String(item.ImageBytes))" />
+                <img src="@String.Format("data:image/png;base64,{0}", Convert.ToBase64String(item.ImageBytes))" />
             }
         </td>
         <td>

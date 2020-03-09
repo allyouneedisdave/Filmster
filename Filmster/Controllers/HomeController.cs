@@ -15,14 +15,14 @@ namespace Filmster.Controllers
 
         public ActionResult About()
         {
-            ViewBag.Message = "Your application description page.";
+            ViewBag.Message = "Interested in films? Look no further! Filmster has all you need to satisfy your filming needs.";
 
             return View();
         }
 
         public ActionResult Contact()
         {
-            ViewBag.Message = "Your contact page.";
+            ViewBag.Message = "Feel free to drop us a line!";
 
             return View();
         }

@@ -17,5 +17,7 @@ namespace Filmster.Models
         public DbSet<FilmImage> FilmImages { get; set; }
 
         public DbSet<Genre> Genres { get; set; }
+
+        public System.Data.Entity.DbSet<Filmster.Models.PersonImage> PersonImages { get; set; }
     }
 }
