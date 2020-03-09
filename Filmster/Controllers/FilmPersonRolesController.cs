@@ -38,12 +38,16 @@ namespace Filmster.Controllers
                 //match the ID between FilmPersonRole and Film - store the single record in 'person'
                 Person person = db.Persons.Where(x => x.PersonId == role.PersonId).Single();
 
+                //NEED TO ADD BYTE DATA TO DATABASE FOR THIS TO WORK
+                FilmImage filmImage = db.FilmImages.Where(x => x.ImageId == role.FilmId).Single();
+
                 //new FilmPersonRolViewModel object to then add to the list
                 FilmPersonRoleViewModel toAdd = new FilmPersonRoleViewModel();
 
                 toAdd.ThisFilmPersonRole = role;    //get the FilmPersonRole record
                 toAdd.ThisFilm = film;              //get the film record
                 toAdd.ThisPerson = person;          //get the person record
+                toAdd.ThisFilmImage = filmImage;
 
                 //add to the FilmPersonRoleList (list of ViewModel objects)
                 FilmPersonRoleList.Add(toAdd);

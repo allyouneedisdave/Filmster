@@ -141,10 +141,12 @@
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
+    <Compile Include="Models\Certificate.cs" />
     <Compile Include="Models\DBContext.cs" />
     <Compile Include="Models\Film.cs" />
     <Compile Include="Models\FilmImage.cs" />
     <Compile Include="Models\FilmPersonRole.cs" />
+    <Compile Include="Models\Genre.cs" />
     <Compile Include="Models\Person.cs" />
     <Compile Include="Models\ViewModels\FilmPersonRoleViewModel.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
