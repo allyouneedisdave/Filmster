@@ -14,5 +14,7 @@ namespace Filmster.Models.ViewModels
         public Genre ThisGenre;
 
         public Certificate ThisCertificate;
+
+        public List<Review> ThisFilmReviews;
     }
 }

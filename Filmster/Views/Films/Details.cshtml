@@ -12,17 +12,17 @@
     <dl class="dl-horizontal">
 
 
-        <dt>
+        @*<dt>
             @Html.DisplayNameFor(model => model.ThisFilm.Title)
-        </dt>
+        </dt>*@
 
         <dd>
             @Html.DisplayFor(model => model.ThisFilm.Title)
         </dd>
 
-        <dt>
+        @*<dt>
             @Html.DisplayNameFor(model => model.ThisFilmImage.ImageBytes)
-        </dt>
+        </dt>*@
 
         @if (Model.ThisFilmImage.ImageBytes != null)
         {
@@ -31,9 +31,9 @@
         }
 
 
-        <dt>
+        @*<dt>
             @Html.DisplayNameFor(model => model.ThisFilm.Synopsis)
-        </dt>
+        </dt>*@
 
         <dd>
             @Html.DisplayFor(model => model.ThisFilm.Synopsis)
@@ -70,6 +70,26 @@
         <dd>
             @Html.DisplayFor(model => model.ThisFilm.Runtime)
         </dd>
+
+        @foreach (var review in Model.ThisFilmReviews)
+        {
+            <dt>
+                @Html.DisplayNameFor(model => review.ReviewTitle)
+            </dt>
+
+            <dd>
+                @Html.DisplayFor(model => review.ReviewTitle)
+            </dd>
+
+            <dt>
+                @Html.DisplayNameFor(model => review.ReviewDetail)
+            </dt>
+
+            <dd>
+                @Html.DisplayFor(model => review.ReviewDetail)
+            </dd>
+
+        }
 
     </dl>
 </div>

@@ -63,11 +63,33 @@ namespace Filmster.Controllers
 
             FilmImage filmImage = db.FilmImages.Where(x => x.ImageId == film.ImageId).Single();
 
+            List<Review> Reviews = db.Reviews.ToList();
+
+            List<Review> reviewsForThisFilm = new List<Review>();
+
+            foreach (Review r in Reviews)
+            {
+                if (r.FilmId == id)
+                {
+                    reviewsForThisFilm.Add(r);
+                }
+            }
+
+            
+
+
+            //List<FilmPersonRole> filmPersonRoleList = db.FilmPersonRoles.Where(x => x.FilmId == film.FilmId).Single();
+
+            //FilmPersonRole filmPersonRole = db.FilmPersonRoles.Where(x => x.FilmId == film.FilmId).Single();
+
+            //Review review = db.Reviews.Where(x => x.FilmId == film.FilmId).Single();
+
             FilmViewModel filmViewModel = new FilmViewModel();
 
             filmViewModel.ThisFilm = film;
             filmViewModel.ThisFilmImage = filmImage;
             filmViewModel.ThisCertificate = certificate;
+            filmViewModel.ThisFilmReviews = reviewsForThisFilm;
 
           
 
