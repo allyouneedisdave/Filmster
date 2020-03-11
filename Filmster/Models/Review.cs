@@ -7,7 +7,7 @@ using System.Web;
 
 namespace Filmster.Models
 {
-    [Table("REVEIW")]
+    [Table("REVIEW")]
     public class Review
     {
         [Key]
