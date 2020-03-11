@@ -18,10 +18,13 @@ namespace Filmster.Models
 
         public DbSet<Genre> Genres { get; set; }
 
+        public DbSet<Certificate> Certificates { get; set; }
+
         public DbSet<PersonImage> PersonImages { get; set; }
 
         public DbSet<User> Users { get; set; }
 
         public DbSet<Review> Reviews { get; set; }
+
     }
 }

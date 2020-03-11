@@ -1,4 +1,4 @@
-﻿@model Filmster.Models.Film
+﻿@model Filmster.Models.ViewModels.FilmViewModel
 
 @{
     ViewBag.Title = "Details";
@@ -11,41 +11,69 @@
     <hr />
     <dl class="dl-horizontal">
 
+
         <dt>
-            @Html.DisplayNameFor(model => model.Title)
+            @Html.DisplayNameFor(model => model.ThisFilm.Title)
         </dt>
 
         <dd>
-            @Html.DisplayFor(model => model.Title)
+            @Html.DisplayFor(model => model.ThisFilm.Title)
         </dd>
 
         <dt>
-            @Html.DisplayNameFor(model => model.Synopsis)
+            @Html.DisplayNameFor(model => model.ThisFilmImage.ImageBytes)
+        </dt>
+
+        @if (Model.ThisFilmImage.ImageBytes != null)
+        {
+            //Convert the image bytes into a png for displaying on the page.
+            <img src="@String.Format("data:image/png;base64,{0}", Convert.ToBase64String(Model.ThisFilmImage.ImageBytes))" />
+        }
+
+
+        <dt>
+            @Html.DisplayNameFor(model => model.ThisFilm.Synopsis)
         </dt>
 
         <dd>
-            @Html.DisplayFor(model => model.Synopsis)
+            @Html.DisplayFor(model => model.ThisFilm.Synopsis)
         </dd>
 
         <dt>
-            @Html.DisplayNameFor(model => model.Runtime)
+            @Html.DisplayNameFor(model => model.ThisGenre.genre)
         </dt>
 
         <dd>
-            @Html.DisplayFor(model => model.Runtime)
+            @Html.DisplayFor(model => model.ThisGenre.genre)
         </dd>
 
         <dt>
-            @Html.DisplayNameFor(model => model.ReleaseDate)
+            @Html.DisplayNameFor(model => model.ThisCertificate.CertificateName)
         </dt>
 
         <dd>
-            @Html.DisplayFor(model => model.ReleaseDate)
+            @Html.DisplayFor(model => model.ThisCertificate.CertificateName)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.ThisFilm.ReleaseDate)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.ThisFilm.ReleaseDate)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.ThisFilm.Runtime)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.ThisFilm.Runtime)
         </dd>
 
     </dl>
 </div>
 <p>
-    @Html.ActionLink("Edit", "Edit", new { id = Model.FilmId }) |
+    @Html.ActionLink("Edit", "Edit", new { id = Model.ThisFilm.FilmId }) |
     @Html.ActionLink("Back to List", "Index")
 </p>

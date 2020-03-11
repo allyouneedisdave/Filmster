@@ -7,6 +7,7 @@ using System.Net;
 using System.Web;
 using System.Web.Mvc;
 using Filmster.Models;
+using Filmster.Models.ViewModels;
 
 namespace Filmster.Controllers
 {
@@ -17,7 +18,30 @@ namespace Filmster.Controllers
         // GET: Films
         public ActionResult Index()
         {
-            return View(db.Films.ToList());
+            List<FilmViewModel> FilmList = new List<FilmViewModel>();
+
+            List<Film> films;
+
+            films = db.Films.ToList();
+
+            foreach (Film thisFilm in films)
+            {
+                // Genre genre = db.Genres.Where(x => x.genre_id == thisFilm.GenreId).Single();
+
+                Certificate certificate = db.Certificates.Where(x => x.CertificateId == thisFilm.CertificateId).Single();
+
+                FilmImage filmImage = db.FilmImages.Where(x => x.ImageId == thisFilm.ImageId).Single();
+
+                FilmViewModel toAdd = new FilmViewModel();
+
+                toAdd.ThisFilm = thisFilm;
+                toAdd.ThisFilmImage = filmImage;
+                toAdd.ThisCertificate = certificate;
+
+                FilmList.Add(toAdd);
+
+            }
+            return View(FilmList);
         }
 
         // GET: Films/Details/5
@@ -32,7 +56,22 @@ namespace Filmster.Controllers
             {
                 return HttpNotFound();
             }
-            return View(film);
+
+            Genre genre = db.Genres.Where(x => x.genre_id == film.GenreId).Single();
+
+            Certificate certificate = db.Certificates.Where(x => x.CertificateId == film.CertificateId).Single();
+
+            FilmImage filmImage = db.FilmImages.Where(x => x.ImageId == film.ImageId).Single();
+
+            FilmViewModel filmViewModel = new FilmViewModel();
+
+            filmViewModel.ThisFilm = film;
+            filmViewModel.ThisFilmImage = filmImage;
+            filmViewModel.ThisCertificate = certificate;
+
+          
+
+            return View(filmViewModel);
         }
 
         // GET: Films/Create
