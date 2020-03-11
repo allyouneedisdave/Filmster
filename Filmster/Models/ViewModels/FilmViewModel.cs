@@ -5,7 +5,7 @@ using System.Web;
 
 namespace Filmster.Models.ViewModels
 {
-    public class FilmsViewModel
+    public class FilmViewModel
     {
         public Film ThisFilm;
 

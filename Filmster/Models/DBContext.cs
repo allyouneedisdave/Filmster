@@ -18,6 +18,10 @@ namespace Filmster.Models
 
         public DbSet<Genre> Genres { get; set; }
 
-        public System.Data.Entity.DbSet<Filmster.Models.PersonImage> PersonImages { get; set; }
+        public DbSet<PersonImage> PersonImages { get; set; }
+
+        public DbSet<User> Users { get; set; }
+
+        public DbSet<Review> Reviews { get; set; }
     }
 }

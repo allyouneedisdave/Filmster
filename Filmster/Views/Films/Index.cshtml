@@ -1,4 +1,4 @@
-﻿@model IEnumerable<Filmster.Models.Film>
+﻿@model IEnumerable<Filmster.Models.ViewModels.FilmViewModel>
 
 @{
     ViewBag.Title = "Index";
@@ -12,56 +12,43 @@
 <table class="table">
     <tr>
         <th>
-            @Html.DisplayNameFor(model => model.GenreId)
+            @Html.DisplayNameFor(model => model.ThisFilmImage.ImageBytes)
         </th>
         <th>
-            @Html.DisplayNameFor(model => model.CertificateId)
+            @Html.DisplayNameFor(model => model.ThisFilm.Title)
         </th>
         <th>
-            @Html.DisplayNameFor(model => model.ImageId)
+            @Html.DisplayNameFor(model => model.ThisCertificate.CertificateName)
         </th>
         <th>
-            @Html.DisplayNameFor(model => model.Title)
+            @Html.DisplayNameFor(model => model.ThisFilm.Synopsis)
         </th>
-        <th>
-            @Html.DisplayNameFor(model => model.Synopsis)
-        </th>
-        <th>
-            @Html.DisplayNameFor(model => model.Runtime)
-        </th>
-        <th>
-            @Html.DisplayNameFor(model => model.ReleaseDate)
-        </th>
+        
         <th></th>
     </tr>
 
 @foreach (var item in Model) {
     <tr>
         <td>
-            @Html.DisplayFor(modelItem => item.GenreId)
+            @if (item.ThisFilmImage.ImageBytes != null)
+            {
+                //Convert the image bytes into a png for displaying on the page.
+                <img src="@String.Format("data:image/png;base64,{0}", Convert.ToBase64String(item.ThisFilmImage.ImageBytes))" />
+            }
         </td>
         <td>
-            @Html.DisplayFor(modelItem => item.CertificateId)
+            @Html.DisplayFor(modelItem => item.ThisFilm.Title)
         </td>
         <td>
-            @Html.DisplayFor(modelItem => item.ImageId)
+            @Html.DisplayFor(modelItem => item.ThisCertificate.CertificateName)
         </td>
         <td>
-            @Html.DisplayFor(modelItem => item.Title)
+            @Html.DisplayFor(modelItem => item.ThisFilm.Synopsis)
         </td>
         <td>
-            @Html.DisplayFor(modelItem => item.Synopsis)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.Runtime)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.ReleaseDate)
-        </td>
-        <td>
-            @Html.ActionLink("Edit", "Edit", new { id=item.FilmId }) |
-            @Html.ActionLink("Details", "Details", new { id=item.FilmId }) |
-            @Html.ActionLink("Delete", "Delete", new { id=item.FilmId })
+            @Html.ActionLink("Edit", "Edit", new { id=item.ThisFilm.FilmId }) |
+            @Html.ActionLink("Details", "Details", new { id=item.ThisFilm.FilmId }) |
+            @Html.ActionLink("Delete", "Delete", new { id=item.ThisFilm.FilmId })
         </td>
     </tr>
 }
