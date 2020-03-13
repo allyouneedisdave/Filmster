@@ -7,6 +7,7 @@ using System.Net;
 using System.Web;
 using System.Web.Mvc;
 using Filmster.Models;
+using Filmster.Models.ViewModels;
 
 namespace Filmster.Controllers
 {
@@ -28,11 +29,24 @@ namespace Filmster.Controllers
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
             Review review = db.Reviews.Find(id);
+           
             if (review == null)
             {
                 return HttpNotFound();
             }
-            return View(review);
+
+            User user = db.Users.Where(x => x.UserId == review.UserId).Single();
+
+            Film film = db.Films.Where(x => x.FilmId == review.FilmId).Single();
+
+            ReviewViewModel reviewViewModel = new ReviewViewModel();
+
+            reviewViewModel.thisReview = review;
+            reviewViewModel.thisUser = user;
+            reviewViewModel.thisFilm = film;
+
+            return View(reviewViewModel);
+       
         }
 
         // GET: Reviews/Create

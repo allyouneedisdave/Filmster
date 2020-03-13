@@ -1,4 +1,4 @@
-﻿@model Filmster.Models.Review
+﻿@model Filmster.Models.ViewModels.ReviewViewModel
 
 @{
     ViewBag.Title = "Details";
@@ -11,56 +11,49 @@
     <hr />
     <dl class="dl-horizontal">
         <dt>
-            @Html.DisplayNameFor(model => model.FilmId)
+            @Html.DisplayNameFor(model => model.thisFilm.Title)
         </dt>
 
         <dd>
-            @Html.DisplayFor(model => model.FilmId)
+            @Html.DisplayFor(model => model.thisFilm.Title)
         </dd>
 
         <dt>
-            @Html.DisplayNameFor(model => model.UserId)
+            @Html.DisplayNameFor(model => model.thisUser.username)
         </dt>
 
         <dd>
-            @Html.DisplayFor(model => model.UserId)
+            @Html.DisplayFor(model => model.thisUser.username)
         </dd>
 
         <dt>
-            @Html.DisplayNameFor(model => model.ReviewTitle)
+            @Html.DisplayNameFor(model => model.thisReview.ReviewTitle)
         </dt>
 
         <dd>
-            @Html.DisplayFor(model => model.ReviewTitle)
+            @Html.DisplayFor(model => model.thisReview.ReviewTitle)
         </dd>
 
         <dt>
-            @Html.DisplayNameFor(model => model.ReviewDetail)
+            @Html.DisplayNameFor(model => model.thisReview.ReviewDetail)
         </dt>
 
         <dd>
-            @Html.DisplayFor(model => model.ReviewDetail)
+            @Html.DisplayFor(model => model.thisReview.ReviewDetail)
         </dd>
 
         <dt>
-            @Html.DisplayNameFor(model => model.CreatedDate)
+            @Html.DisplayNameFor(model => model.thisReview.Rating)
         </dt>
 
         <dd>
-            @Html.DisplayFor(model => model.CreatedDate)
+            @Html.DisplayFor(model => model.thisReview.Rating)
         </dd>
 
-        <dt>
-            @Html.DisplayNameFor(model => model.Rating)
-        </dt>
-
-        <dd>
-            @Html.DisplayFor(model => model.Rating)
-        </dd>
-
+    
     </dl>
 </div>
 <p>
-    @Html.ActionLink("Edit", "Edit", new { id = Model.ReviewId }) |
+    @Html.ActionLink("Edit", "Edit", new { id = Model.thisReview.ReviewId }) |
     @Html.ActionLink("Back to List", "Index")
 </p>
