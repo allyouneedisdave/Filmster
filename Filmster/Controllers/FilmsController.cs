@@ -63,36 +63,68 @@ namespace Filmster.Controllers
 
             FilmImage filmImage = db.FilmImages.Where(x => x.ImageId == film.ImageId).Single();
 
-            List<Review> Reviews = db.Reviews.ToList();
+            List<FilmPersonRole> filmPersonRoles = db.FilmPersonRoles.ToList();
 
-            List<Review> reviewsForThisFilm = new List<Review>();
+            List<Review> reviews = db.Reviews.ToList();
 
-            foreach (Review r in Reviews)
+            List<ReviewViewModel> reviewsForThisFilm = new List<ReviewViewModel>();
+
+            if (reviews.Count > 0)
             {
-                if (r.FilmId == id)
+                foreach (Review r in reviews)
                 {
-                    reviewsForThisFilm.Add(r);
+                    if (r.FilmId == id)
+                    {
+                        ReviewViewModel reviewViewModel = new ReviewViewModel();
+                        reviewViewModel.thisReview = r;
+
+                        User user = db.Users.Where(x => x.UserId == r.UserId).Single();
+                        reviewViewModel.thisUser = user;
+
+                        reviewViewModel.thisFilm = film;
+
+                        reviewsForThisFilm.Add(reviewViewModel);
+
+                    }
                 }
             }
 
-            
+            List<FilmPersonRoleViewModel> rolesForThisFilm = new List<FilmPersonRoleViewModel>();
+
+            foreach (FilmPersonRole role in filmPersonRoles)
+            {
+                if (role.FilmId == id)
+                {
+                    Person person = db.Persons.Where(x => x.PersonId == role.PersonId).Single();
+
+                    PersonImage personImage = new PersonImage();
+
+                    if (person != null)
+                    {
+                       personImage = db.PersonImages.Where(x => x.ImageId == person.ImageId).Single();                       
+                    }
 
 
-            //List<FilmPersonRole> filmPersonRoleList = db.FilmPersonRoles.Where(x => x.FilmId == film.FilmId).Single();
+                    FilmPersonRoleViewModel filmPersonRoleViewModel = new FilmPersonRoleViewModel();
 
-            //FilmPersonRole filmPersonRole = db.FilmPersonRoles.Where(x => x.FilmId == film.FilmId).Single();
+                    filmPersonRoleViewModel.ThisFilm = film;
+                    filmPersonRoleViewModel.ThisPerson = person;
+                    filmPersonRoleViewModel.ThisPersonImage = personImage;
+                    filmPersonRoleViewModel.ThisFilmPersonRole = role;
+                          
+                    rolesForThisFilm.Add(filmPersonRoleViewModel);
 
-            //Review review = db.Reviews.Where(x => x.FilmId == film.FilmId).Single();
-
+                }
+            }
+          
             FilmViewModel filmViewModel = new FilmViewModel();
 
             filmViewModel.ThisFilm = film;
             filmViewModel.ThisFilmImage = filmImage;
             filmViewModel.ThisCertificate = certificate;
             filmViewModel.ThisFilmReviews = reviewsForThisFilm;
-
-          
-
+            filmViewModel.ThisFilmPersonRoleViewModel = rolesForThisFilm;
+       
             return View(filmViewModel);
         }
 
@@ -156,7 +188,21 @@ namespace Filmster.Controllers
             {
                 return HttpNotFound();
             }
-            return View(film);
+
+            Genre genre = db.Genres.Where(x => x.genre_id == film.GenreId).Single();
+
+            Certificate certificate = db.Certificates.Where(x => x.CertificateId == film.CertificateId).Single();
+
+            FilmImage filmImage = db.FilmImages.Where(x => x.ImageId == film.ImageId).Single();
+
+            FilmViewModel filmViewModel = new FilmViewModel();
+            filmViewModel.ThisFilm = film;
+            filmViewModel.ThisGenre = genre;
+            filmViewModel.ThisCertificate = certificate;
+            filmViewModel.ThisFilmImage = filmImage;
+
+
+            return View(filmViewModel);
         }
 
         // POST: Films/Edit/5
@@ -164,15 +210,19 @@ namespace Filmster.Controllers
         // more details see https://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Edit([Bind(Include = "FilmID,GenreID,CertificateID,ImageID,Title,Synopsis,Runtime,ReleaseDate")] Film film)
+        public ActionResult Edit([Bind(Include = "ThisFilm, ThisFilmImage, ThisGenre, ThisCertificate, ThisFilmReviews")] FilmViewModel filmViewModel)
         {
             if (ModelState.IsValid)
             {
-                db.Entry(film).State = EntityState.Modified;
+
+        
+                db.Entry(filmViewModel.ThisFilm).State = EntityState.Modified;
                 db.SaveChanges();
+
+
                 return RedirectToAction("Index");
             }
-            return View(film);
+            return View(filmViewModel);
         }
 
         // GET: Films/Delete/5

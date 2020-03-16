@@ -15,6 +15,8 @@ namespace Filmster.Models.ViewModels
 
         public Certificate ThisCertificate;
 
-        public List<Review> ThisFilmReviews;
+        public List<ReviewViewModel> ThisFilmReviews;
+
+        public List<FilmPersonRoleViewModel> ThisFilmPersonRoleViewModel;
     }
 }

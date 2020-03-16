@@ -71,25 +71,76 @@
             @Html.DisplayFor(model => model.ThisFilm.Runtime)
         </dd>
 
+        <br />
+
+
         @foreach (var review in Model.ThisFilmReviews)
         {
+
+
             <dt>
-                @Html.DisplayNameFor(model => review.ReviewTitle)
+                @Html.DisplayNameFor(model => review.thisUser.username)
             </dt>
 
             <dd>
-                @Html.DisplayFor(model => review.ReviewTitle)
+                @Html.DisplayFor(model => review.thisUser.username)
             </dd>
 
             <dt>
-                @Html.DisplayNameFor(model => review.ReviewDetail)
+                @Html.DisplayNameFor(model => review.thisReview.ReviewTitle)
             </dt>
 
             <dd>
-                @Html.DisplayFor(model => review.ReviewDetail)
+                @Html.DisplayFor(model => review.thisReview.ReviewTitle)
             </dd>
+            <dt>
+                @Html.DisplayNameFor(model => review.thisReview.ReviewTitle)
+            </dt>
+
+            <dd>
+                @Html.DisplayFor(model => review.thisReview.ReviewTitle)
+            </dd>
+
 
         }
+
+        <br />
+        <h5>Director</h5>
+        @foreach (var role in Model.ThisFilmPersonRoleViewModel)
+        {
+            if (role.ThisFilmPersonRole.IsActor == true)
+            {
+                <dd>
+                    @Html.DisplayFor(model => role.ThisPerson.FirstName)
+                </dd>
+                <dd>
+                    @Html.DisplayFor(model => role.ThisPerson.LastName)
+                </dd>
+                <dd>
+                    <img src="@String.Format("data:image/png;base64,{0}", Convert.ToBase64String(role.ThisPersonImage.ImageBytes))" />
+                </dd>
+
+            }
+        }
+        <h5>Actors</h5>
+        @foreach (var role in Model.ThisFilmPersonRoleViewModel)
+        {
+            if (role.ThisFilmPersonRole.IsDirector == true)
+            {
+                <dd>
+                    @Html.DisplayFor(model => role.ThisPerson.FirstName)
+                </dd>
+                <dd>
+                    @Html.DisplayFor(model => role.ThisPerson.LastName)
+                </dd>
+                <dd>
+                    <img src="@String.Format("data:image/png;base64,{0}", Convert.ToBase64String(role.ThisPersonImage.ImageBytes))" />
+                </dd>
+
+            }
+        }
+
+
 
     </dl>
 </div>

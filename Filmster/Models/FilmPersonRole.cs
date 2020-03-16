@@ -12,7 +12,7 @@ namespace Filmster.Models
     {
         [Key]
         [Column("role_id")]
-        public int? RoleId { get; set; }
+        public int RoleId { get; set; }
 
         [Column("person_id")]
         public int? PersonId { get; set; }

@@ -11,6 +11,8 @@ namespace Filmster.Models.ViewModels
 
         public Person ThisPerson;
 
+        public PersonImage ThisPersonImage;
+
         public Film ThisFilm;
 
         public FilmImage ThisFilmImage;
