@@ -1,4 +1,4 @@
-﻿@model IEnumerable<Filmster.Models.Person>
+﻿@model IEnumerable<Filmster.Models.ViewModels.PersonViewModel>
 
 @{
     ViewBag.Title = "Index";
@@ -13,47 +13,56 @@
     <tr>
        
         <th>
-            @Html.DisplayNameFor(model => model.FirstName)
+            @Html.DisplayNameFor(model => model.ThisPersonImage.ImageBytes)
         </th>
         <th>
-            @Html.DisplayNameFor(model => model.LastName)
+            @Html.DisplayNameFor(model => model.ThisPerson.FirstName)
         </th>
         <th>
+            @Html.DisplayNameFor(model => model.ThisPerson.LastName)
+        </th>
+        @*<th>
             @Html.DisplayNameFor(model => model.IsActor)
         </th>
         <th>
             @Html.DisplayNameFor(model => model.IsDirector)
-        </th>
+        </th>*@
         <th>
-            @Html.DisplayNameFor(model => model.Biography)
+            @Html.DisplayNameFor(model => model.ThisPerson.Biography)
         </th>
         <th></th>
     </tr>
 
 @foreach (var item in Model) {
-    <tr>
-
-        <td>
-            @Html.DisplayFor(modelItem => item.FirstName)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.LastName)
-        </td>
-        <td>
+<tr>
+    <td>
+        @if (item.ThisPersonImage.ImageBytes != null)
+        {
+            //Convert the image bytes into a png for displaying on the page.
+            <img height="100px"; src="@String.Format("data:image/png;base64,{0}", Convert.ToBase64String(item.ThisPersonImage.ImageBytes))" />
+        }
+    </td>
+    <td>
+        @Html.DisplayFor(modelItem => item.ThisPerson.FirstName)
+    </td>
+    <td>
+        @Html.DisplayFor(modelItem => item.ThisPerson.LastName)
+    </td>
+    @*<td>
             @Html.DisplayFor(modelItem => item.IsActor)
         </td>
         <td>
             @Html.DisplayFor(modelItem => item.IsDirector)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.PersonShortBio)
-        </td>
-        <td>
-            @Html.ActionLink("Edit", "Edit", new { id=item.PersonId }) |
-            @Html.ActionLink("Details", "Details", new { id=item.PersonId }) |
-            @Html.ActionLink("Delete", "Delete", new { id=item.PersonId })
-        </td>
-    </tr>
+        </td>*@
+    <td>
+        @Html.DisplayFor(modelItem => item.ThisPerson.PersonShortBio)
+    </td>
+    <td>
+        @Html.ActionLink("Edit", "Edit", new { id = item.ThisPerson.PersonId }) |
+        @Html.ActionLink("Details", "Details", new { id = item.ThisPerson.PersonId }) |
+        @Html.ActionLink("Delete", "Delete", new { id = item.ThisPerson.PersonId })
+    </td>
+</tr>
 }
 
 </table>

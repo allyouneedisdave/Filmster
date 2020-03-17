@@ -7,6 +7,7 @@ using System.Net;
 using System.Web;
 using System.Web.Mvc;
 using Filmster.Models;
+using Filmster.Models.ViewModels;
 
 namespace Filmster.Controllers
 {
@@ -17,7 +18,34 @@ namespace Filmster.Controllers
         // GET: Persons
         public ActionResult Index()
         {
-            return View(db.Persons.ToList());
+            List<PersonViewModel> personsList = new List<PersonViewModel>();
+
+         
+
+            List<Person> persons;
+
+            persons = db.Persons.ToList();
+
+            if (persons.Count > 0)
+            {
+                PersonViewModel personViewModel;
+
+                foreach (Person p in persons)
+                {
+                   
+                    PersonImage personImage = db.PersonImages.Where(x => x.ImageId == p.ImageId).Single();
+
+                    personViewModel = new PersonViewModel();
+                    personViewModel.ThisPerson = p;
+                    personViewModel.ThisPersonImage = personImage;
+
+                    personsList.Add(personViewModel);
+                }
+           
+            }
+
+
+            return View(personsList);
         }
 
         // GET: Persons/Details/5
@@ -32,6 +60,24 @@ namespace Filmster.Controllers
             {
                 return HttpNotFound();
             }
+
+            PersonViewModel personViewModel = new PersonViewModel();
+
+            PersonImage personImage = db.PersonImages.Where(x => x.ImageId == person.ImageId).Single();
+
+
+            List<FilmPersonRoleViewModel> personRoleViewModelList = new List<FilmPersonRoleViewModel>();
+
+            List<FilmPersonRole> rolesList = new List<FilmPersonRole>();
+            rolesList = db.FilmPersonRoles.ToList();
+
+            //for each role, do stuff if it matches the person id.
+            if (rolesList.Count > 0)
+            {
+                //foreach()
+            }
+            
+
             return View(person);
         }
 

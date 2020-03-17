@@ -10,6 +10,9 @@ namespace Filmster.Models.ViewModels
         public Person ThisPerson;
 
         public PersonImage ThisPersonImage;
-        
+
+        public List<FilmPersonRoleViewModel> ThisFilmPersonRolesViewModel;
+
+           
     }
 }

@@ -33,7 +33,7 @@
             @if (item.ThisFilmImage.ImageBytes != null)
             {
                 //Convert the image bytes into a png for displaying on the page.
-                <img src="@String.Format("data:image/png;base64,{0}", Convert.ToBase64String(item.ThisFilmImage.ImageBytes))" />
+                <img height="100px"; src="@String.Format("data:image/png;base64,{0}", Convert.ToBase64String(item.ThisFilmImage.ImageBytes))" />
             }
         </td>
         <td>
