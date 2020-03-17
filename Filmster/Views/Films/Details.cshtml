@@ -105,7 +105,7 @@
         }
 
         <br />
-        <h5>Director</h5>
+        <h5>Actors</h5>
         @foreach (var role in Model.ThisFilmPersonRoleViewModel)
         {
             if (role.ThisFilmPersonRole.IsActor == true)
@@ -117,12 +117,12 @@
                     @Html.DisplayFor(model => role.ThisPerson.LastName)
                 </dd>
                 <dd>
-                    <img src="@String.Format("data:image/png;base64,{0}", Convert.ToBase64String(role.ThisPersonImage.ImageBytes))" />
+                    <img height="100px"; src="@String.Format("data:image/png;base64,{0}", Convert.ToBase64String(role.ThisPersonImage.ImageBytes))" />
                 </dd>
 
             }
         }
-        <h5>Actors</h5>
+        <h5>Directors</h5>
         @foreach (var role in Model.ThisFilmPersonRoleViewModel)
         {
             if (role.ThisFilmPersonRole.IsDirector == true)
@@ -134,7 +134,7 @@
                     @Html.DisplayFor(model => role.ThisPerson.LastName)
                 </dd>
                 <dd>
-                    <img src="@String.Format("data:image/png;base64,{0}", Convert.ToBase64String(role.ThisPersonImage.ImageBytes))" />
+                    <img height="100px" src="@String.Format("data:image/png;base64,{0}", Convert.ToBase64String(role.ThisPersonImage.ImageBytes))" />
                 </dd>
 
             }

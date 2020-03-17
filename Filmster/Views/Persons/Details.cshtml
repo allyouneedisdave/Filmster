@@ -1,4 +1,4 @@
-﻿@model Filmster.Models.Person
+﻿@model Filmster.Models.ViewModels.PersonViewModel
 
 @{
     ViewBag.Title = "Details";
@@ -11,56 +11,74 @@
     <hr />
     <dl class="dl-horizontal">
         <dt>
-            @Html.DisplayNameFor(model => model.ImageId)
+            @Html.DisplayNameFor(model => model.ThisPersonImage.ImageBytes)
         </dt>
 
         <dd>
-            @Html.DisplayFor(model => model.ImageId)
+            @if (Model.ThisPersonImage.ImageBytes != null)
+            {
+                //Convert the image bytes into a png for displaying on the page.
+                <img height="100px" ; src="@String.Format("data:image/png;base64,{0}", Convert.ToBase64String(Model.ThisPersonImage.ImageBytes))" />
+            }
+        <dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.ThisPerson.FirstName)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.ThisPerson.FirstName)
         </dd>
 
         <dt>
-            @Html.DisplayNameFor(model => model.FirstName)
+            @Html.DisplayNameFor(model => model.ThisPerson.LastName)
         </dt>
 
         <dd>
-            @Html.DisplayFor(model => model.FirstName)
+            @Html.DisplayFor(model => model.ThisPerson.LastName)
         </dd>
 
         <dt>
-            @Html.DisplayNameFor(model => model.LastName)
+            @Html.DisplayNameFor(model => model.ThisPerson.Biography)
         </dt>
 
         <dd>
-            @Html.DisplayFor(model => model.LastName)
+            @Html.DisplayFor(model => model.ThisPerson.Biography)
         </dd>
 
-        <dt>
-            @Html.DisplayNameFor(model => model.IsActor)
-        </dt>
 
-        <dd>
-            @Html.DisplayFor(model => model.IsActor)
-        </dd>
+        <hr />
+        <p>Acting History</p>
+        @if (Model.ThisFilmPersonRolesViewModel.Count > 0)
+        {
+            foreach (var role in Model.ThisFilmPersonRolesViewModel)
+            {
+                if (role.ThisFilmPersonRole.IsActor == true)
+                {
+                    @Html.ActionLink(role.ThisFilm.Title.ToString(), "Details", new { id = role.ThisFilm.FilmId })
+                }
 
-        <dt>
-            @Html.DisplayNameFor(model => model.IsDirector)
-        </dt>
+            }
+        }
 
-        <dd>
-            @Html.DisplayFor(model => model.IsDirector)
-        </dd>
 
-        <dt>
-            @Html.DisplayNameFor(model => model.Biography)
-        </dt>
 
-        <dd>
-            @Html.DisplayFor(model => model.Biography)
-        </dd>
+        <hr />
+        <p>Directing History</p>
+        @if (Model.ThisFilmPersonRolesViewModel.Count > 0)
+        {
+            foreach (var role in Model.ThisFilmPersonRolesViewModel)
+            {
+                if (role.ThisFilmPersonRole.IsDirector == true)
+                {
+                    @Html.ActionLink(role.ThisFilm.Title.ToString(), "Details", new { id = role.ThisFilm.FilmId })
+                }
 
+            }
+        }
     </dl>
 </div>
 <p>
-    @Html.ActionLink("Edit", "Edit", new { id = Model.PersonId }) |
+    @Html.ActionLink("Edit", "Edit", new { id = Model.ThisPerson.PersonId }) |
     @Html.ActionLink("Back to List", "Index")
 </p>
