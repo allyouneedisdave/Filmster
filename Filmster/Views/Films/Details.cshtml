@@ -40,11 +40,11 @@
         </dd>
 
         <dt>
-            @Html.DisplayNameFor(model => model.ThisGenre.genre)
+            @Html.DisplayNameFor(model => model.ThisGenre.GenreName)
         </dt>
 
         <dd>
-            @Html.DisplayFor(model => model.ThisGenre.genre)
+            @Html.DisplayFor(model => model.ThisGenre.GenreName)
         </dd>
 
         <dt>
@@ -74,50 +74,20 @@
         <br />
 
 
-        @foreach (var review in Model.ThisFilmReviews)
-        {
 
-
-            <dt>
-                @Html.DisplayNameFor(model => review.thisUser.username)
-            </dt>
-
-            <dd>
-                @Html.DisplayFor(model => review.thisUser.username)
-            </dd>
-
-            <dt>
-                @Html.DisplayNameFor(model => review.thisReview.ReviewTitle)
-            </dt>
-
-            <dd>
-                @Html.DisplayFor(model => review.thisReview.ReviewTitle)
-            </dd>
-            <dt>
-                @Html.DisplayNameFor(model => review.thisReview.ReviewTitle)
-            </dt>
-
-            <dd>
-                @Html.DisplayFor(model => review.thisReview.ReviewTitle)
-            </dd>
-
-
-        }
-
-        <br />
         <h5>Actors</h5>
         @foreach (var role in Model.ThisFilmPersonRoleViewModel)
         {
             if (role.ThisFilmPersonRole.IsActor == true)
             {
                 <dd>
-                    @Html.DisplayFor(model => role.ThisPerson.FirstName)
+
+                    @Html.ActionLink($"{role.ThisPerson.FirstName} {role.ThisPerson.LastName}", "Details", "Person", new { id = role.ThisPerson.PersonId }, null)
+
                 </dd>
+
                 <dd>
-                    @Html.DisplayFor(model => role.ThisPerson.LastName)
-                </dd>
-                <dd>
-                    <img height="100px"; src="@String.Format("data:image/png;base64,{0}", Convert.ToBase64String(role.ThisPersonImage.ImageBytes))" />
+                    <img height="100px" ; src="@String.Format("data:image/png;base64,{0}", Convert.ToBase64String(role.ThisPersonImage.ImageBytes))" />
                 </dd>
 
             }
@@ -128,17 +98,55 @@
             if (role.ThisFilmPersonRole.IsDirector == true)
             {
                 <dd>
-                    @Html.DisplayFor(model => role.ThisPerson.FirstName)
+                    @Html.ActionLink($"{role.ThisPerson.FirstName} {role.ThisPerson.LastName}", "Details", "Persons", new { id = role.ThisPerson.PersonId }, null)
+
                 </dd>
-                <dd>
-                    @Html.DisplayFor(model => role.ThisPerson.LastName)
-                </dd>
+
                 <dd>
                     <img height="100px" src="@String.Format("data:image/png;base64,{0}", Convert.ToBase64String(role.ThisPersonImage.ImageBytes))" />
                 </dd>
 
             }
         }
+        <hr />
+
+        <h5>Reviews</h5>
+
+        @foreach (var review in Model.ThisFilmReviews)
+        {
+
+
+    <dt>
+        
+
+        @Html.DisplayNameFor(model => review.thisUser.Username)
+    </dt>
+
+    <dd>
+        @Html.ActionLink(review.thisUser.Username, "Details", "Users", new { id = review.thisUser.UserId }, null)
+    </dd>
+
+            <dt>
+                @Html.DisplayNameFor(model => review.thisReview.ReviewTitle)
+            </dt>
+
+            <dd>
+                @Html.DisplayFor(model => review.thisReview.ReviewTitle)
+            </dd>
+            <dt>
+                @Html.DisplayNameFor(model => review.thisReview.ReviewShortDetail)
+            </dt>
+
+            <dd>
+                @Html.DisplayFor(model => review.thisReview.ReviewShortDetail)
+                @Html.ActionLink("(See Full Review)", "Details", "Reviews", new { id = Model.ThisFilm.FilmId }, null)
+            </dd>
+
+            <hr />
+
+        }
+
+
 
 
 

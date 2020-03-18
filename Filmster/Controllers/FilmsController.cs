@@ -1,13 +1,15 @@
-﻿using System;
+﻿using Filmster.Models;
+using Filmster.Models.ViewModels;
+using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Data.Entity;
+using System.Drawing;
+using System.IO;
 using System.Linq;
 using System.Net;
 using System.Web;
 using System.Web.Mvc;
-using Filmster.Models;
-using Filmster.Models.ViewModels;
 
 namespace Filmster.Controllers
 {
@@ -57,7 +59,7 @@ namespace Filmster.Controllers
                 return HttpNotFound();
             }
 
-            Genre genre = db.Genres.Where(x => x.genre_id == film.GenreId).Single();
+            Genre genre = db.Genres.Where(x => x.GenreId == film.GenreId).Single();
 
             Certificate certificate = db.Certificates.Where(x => x.CertificateId == film.CertificateId).Single();
 
@@ -121,6 +123,7 @@ namespace Filmster.Controllers
 
             filmViewModel.ThisFilm = film;
             filmViewModel.ThisFilmImage = filmImage;
+            filmViewModel.ThisGenre = genre;
             filmViewModel.ThisCertificate = certificate;
             filmViewModel.ThisFilmReviews = reviewsForThisFilm;
             filmViewModel.ThisFilmPersonRoleViewModel = rolesForThisFilm;
@@ -131,6 +134,16 @@ namespace Filmster.Controllers
         // GET: Films/Create
         public ActionResult Create()
         {
+            var genreQuery = from m in db.Genres
+                             orderby m.GenreName
+                             select m;
+            ViewBag.Genres = new SelectList(genreQuery, "GenreId", "GenreName", null);
+
+            var certificateQuery = from m in db.Certificates
+                                   orderby m.CertificateName
+                                   select m;
+            ViewBag.Certificates = new SelectList(certificateQuery, "CertificateId", "CertificateName", null);
+
             return View();
         }
 
@@ -158,6 +171,40 @@ namespace Filmster.Controllers
                     {
                         //DO SOMETHING WITH THE FILE
                         //CREATE A METHOD TO CONVERT TO BLOB
+                        if (Request.Files.Count > 0)
+                        {
+                            var file = Request.Files[0];
+                            {
+                                var fileName = Path.GetFileName(file.FileName);
+                                var path = Path.Combine(Server.MapPath("~/ImagesTemp/"), fileName);
+                                file.SaveAs(path);
+
+                                Image newImage = Image.FromFile(path);
+                                FilmImage filmImage = new FilmImage();
+                                filmImage.ImageBytes = filmImage.ConvertImageToByteArray(newImage);
+
+
+                                db.FilmImages.Add(filmImage);
+                                db.SaveChanges();
+                                int imageId = filmImage.ImageId;
+                                film.ImageId = imageId;
+
+                                if (System.IO.File.Exists(path))
+                                {
+                                    try
+                                    {
+                                        System.IO.File.Delete(path);
+                                    }
+                                    catch (Exception)
+                                    {
+
+                                    }
+
+                                }
+                            }
+                        }
+
+
                     }
                     else
                     {
@@ -166,6 +213,9 @@ namespace Filmster.Controllers
                     }
                 }
                 //add the film to the database and save
+
+                film.GenreId = Int32.Parse(Request["Genres"]);
+                film.CertificateId = Int32.Parse(Request["Certificates"]);
 
                 db.Films.Add(film);
                 db.SaveChanges();
@@ -189,7 +239,42 @@ namespace Filmster.Controllers
                 return HttpNotFound();
             }
 
-            Genre genre = db.Genres.Where(x => x.genre_id == film.GenreId).Single();
+
+
+
+            //Get genre collection for drop down box
+            var genreQuery = from m in db.Genres
+                             orderby m.GenreName
+                             select m;
+
+            if (film.GenreId == 0)
+            {
+                ViewBag.Genres = new SelectList(genreQuery, "GenreId", "GenreName", null);
+            }
+            else
+            {
+                ViewBag.Genres = new SelectList(genreQuery, "GenreId", "GenreName", film.GenreId);
+            }
+
+          
+
+            //Get certificate selection for drop down box
+            var certificateQuery = from m in db.Certificates
+                                   orderby m.CertificateName
+                                   select m;
+            if (film.CertificateId == 0)
+            {
+                ViewBag.Certificates = new SelectList(certificateQuery, "CertificateId", "CertificateName", null);
+            }
+            else
+            {
+                ViewBag.Certificates = new SelectList(certificateQuery, "CertificateId", "CertificateName", film.CertificateId);
+            }
+            
+
+
+
+            Genre genre = db.Genres.Where(x => x.GenreId == film.GenreId).Single();
 
             Certificate certificate = db.Certificates.Where(x => x.CertificateId == film.CertificateId).Single();
 
@@ -245,6 +330,7 @@ namespace Filmster.Controllers
         [ValidateAntiForgeryToken]
         public ActionResult DeleteConfirmed(int id)
         {
+
             Film film = db.Films.Find(id);
             db.Films.Remove(film);
             db.SaveChanges();

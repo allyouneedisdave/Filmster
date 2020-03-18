@@ -74,7 +74,14 @@ namespace Filmster.Controllers
 
                                 if (System.IO.File.Exists(path))
                                 {
-                                    System.IO.File.Delete(path);
+                                    try
+                                    {
+                                        System.IO.File.Delete(path);
+                                    }
+                                    catch (Exception)
+                                    {
+                                    }
+
                                 }
 
                             }

@@ -31,5 +31,25 @@ namespace Filmster.Models
 
         [Column("rating")]
         public int Rating { get; set; }
+
+
+        public string ReviewShortDetail
+        {
+            //get only
+            get
+            {
+                //if the length of the desc is greater than 100 characters
+                if ((ReviewDetail.Length) > 100)
+                {
+                    //get a substring of the first 100 characters followed by ellipses
+                    return $"{ReviewDetail.Substring(0, 100)} ...";
+                }
+                else
+                {
+                    //otherwise return the full description
+                    return ReviewDetail;
+                }
+            }
+        }
     }
 }

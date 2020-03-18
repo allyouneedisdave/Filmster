@@ -15,7 +15,7 @@ namespace Filmster.Models
         public int UserId { get; set; }
 
         [Column("username")]
-        public string username { get; set; }
+        public string Username { get; set; }
 
     }
 }

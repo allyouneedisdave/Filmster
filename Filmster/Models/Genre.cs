@@ -12,9 +12,9 @@ namespace Filmster.Models
     {
         [Key]
         [Column("genre_id")]
-        public int genre_id { get; set; }
+        public int GenreId { get; set; }
 
         [Column("genre")]
-        public string genre { get; set; }
+        public string GenreName { get; set; }
     }
 }
