@@ -7,7 +7,7 @@
 <h2>Edit</h2>
 
 
-@using (Html.BeginForm())
+@using (Html.BeginForm("Edit", "Films", FormMethod.Post, new { id = "form1" }))
 {
     @Html.AntiForgeryToken()
     
@@ -16,6 +16,8 @@
     <hr />
     @Html.ValidationSummary(true, "", new { @class = "text-danger" })
     @Html.HiddenFor(model => model.ThisFilm.FilmId)
+    @Html.HiddenFor(model => model.ThisFilmImage.ImageId)
+
 
 
     <div class="form-group">
@@ -33,7 +35,7 @@
     }
 
 
-    @Html.ActionLink("Add a new image", "Create", "FilmImages", new { id = Model.ThisFilmImage.ImageId }, null)
+    @*@Html.ActionLink("Add a new image", "Create", "FilmImages", new { id = Model.ThisFilmImage.ImageId }, null)*@
 
 
     <div class="form-group">

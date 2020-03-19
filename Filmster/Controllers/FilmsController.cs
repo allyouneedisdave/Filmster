@@ -295,15 +295,19 @@ namespace Filmster.Controllers
         // more details see https://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Edit([Bind(Include = "ThisFilm, ThisFilmImage, ThisGenre, ThisCertificate, ThisFilmReviews")] FilmViewModel filmViewModel)
+        public ActionResult Edit(FilmViewModel filmViewModel)
         {
             if (ModelState.IsValid)
             {
 
-        
+                //Film film = db.Films.SingleOrDefault(c => c.FilmId == filmViewModel.ThisFilm.FilmId);
+
+                filmViewModel.ThisFilm.ImageId = filmViewModel.ThisFilmImage.ImageId;
+                filmViewModel.ThisFilm.GenreId = Int32.Parse(Request["Genres"]);
+                filmViewModel.ThisFilm.CertificateId = Int32.Parse(Request["Certificates"]);               
+
                 db.Entry(filmViewModel.ThisFilm).State = EntityState.Modified;
                 db.SaveChanges();
-
 
                 return RedirectToAction("Index");
             }
