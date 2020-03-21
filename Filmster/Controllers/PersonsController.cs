@@ -154,7 +154,41 @@ namespace Filmster.Controllers
             {
                 return HttpNotFound();
             }
-            return View(person);
+
+            PersonViewModel personViewModel = new PersonViewModel();
+
+            PersonImage personImage = db.PersonImages.Where(x => x.ImageId == person.ImageId).Single();
+
+            List<FilmPersonRoleViewModel> personRoleViewModelList = new List<FilmPersonRoleViewModel>();
+
+            List<FilmPersonRole> rolesList = new List<FilmPersonRole>();
+            rolesList = db.FilmPersonRoles.ToList();
+
+            // For each role, do stuff if it matches the person id.
+            if (rolesList.Count > 0)
+            {
+                foreach (FilmPersonRole role in rolesList)
+                {
+                    if (role.PersonId == person.PersonId)
+                    {
+                        FilmPersonRoleViewModel roleViewModel = new FilmPersonRoleViewModel();
+
+                        Film film = db.Films.Where(x => x.FilmId == role.FilmId).Single();
+
+                        roleViewModel.ThisFilm = film;
+                        roleViewModel.ThisFilmPersonRole = role;
+
+                        personRoleViewModelList.Add(roleViewModel);
+
+                    }
+                }
+            }
+
+            personViewModel.ThisFilmPersonRolesViewModel = personRoleViewModelList;
+            personViewModel.ThisPerson = person;
+            personViewModel.ThisPersonImage = personImage;
+
+            return View(personViewModel);
         }
 
         // POST: Persons/Edit/5
