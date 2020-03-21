@@ -295,16 +295,76 @@ namespace Filmster.Controllers
         // more details see https://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Edit(FilmViewModel filmViewModel)
+        public ActionResult Edit(FilmViewModel filmViewModel, HttpPostedFileBase upload)
         {
             if (ModelState.IsValid)
             {
 
-                //Film film = db.Films.SingleOrDefault(c => c.FilmId == filmViewModel.ThisFilm.FilmId);
-
                 filmViewModel.ThisFilm.ImageId = filmViewModel.ThisFilmImage.ImageId;
                 filmViewModel.ThisFilm.GenreId = Int32.Parse(Request["Genres"]);
-                filmViewModel.ThisFilm.CertificateId = Int32.Parse(Request["Certificates"]);               
+                filmViewModel.ThisFilm.CertificateId = Int32.Parse(Request["Certificates"]);
+
+                //
+
+                //check to see if a file has been uploaded
+                if (upload != null && upload.ContentLength > 0)
+                {
+                    //check to see if valid MIME type (JPG / PNG or GIF images)
+                    if (upload.ContentType == "image/jpeg" ||
+                        upload.ContentType == "image/jpg" ||
+                        upload.ContentType == "image/gif" ||
+                        upload.ContentType == "image/png")
+                    {
+                        //DO SOMETHING WITH THE FILE
+                        //CREATE A METHOD TO CONVERT TO BLOB
+                        if (Request.Files.Count > 0)
+                        {
+                            var file = Request.Files[0];
+                            {
+                                var fileName = Path.GetFileName(file.FileName);
+                                var path = Path.Combine(Server.MapPath("~/ImagesTemp/"), fileName);
+                                file.SaveAs(path);
+
+                                Image newImage = Image.FromFile(path);
+                                FilmImage filmImage = new FilmImage();
+                                filmImage.ImageBytes = filmImage.ConvertImageToByteArray(newImage);
+
+
+                                db.FilmImages.Add(filmImage);
+                                db.SaveChanges();
+                                int imageId = filmImage.ImageId;
+                                filmViewModel.ThisFilm.ImageId = imageId;
+                 
+
+                                if (System.IO.File.Exists(path))
+                                {
+                                    try
+                                    {
+                                        System.IO.File.Delete(path);
+                                    }
+                                    catch (Exception)
+                                    {
+
+                                    }
+
+                                }
+                            }
+                        }
+
+
+                    }
+                    else
+                    {
+                        //construct a message that can be displayed in the view
+                        ViewBag.Message = "Not valid image format";
+                    }
+                }
+
+                //
+
+                //Film film = db.Films.SingleOrDefault(c => c.FilmId == filmViewModel.ThisFilm.FilmId);
+
+            
 
                 db.Entry(filmViewModel.ThisFilm).State = EntityState.Modified;
                 db.SaveChanges();

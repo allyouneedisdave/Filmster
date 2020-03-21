@@ -7,7 +7,7 @@
 <h2>Edit</h2>
 
 
-@using (Html.BeginForm("Edit", "Films", FormMethod.Post, new { id = "form1" }))
+@using (Html.BeginForm("Edit", "Films", FormMethod.Post, new { enctype = "multipart/form-data" }))
 {
     @Html.AntiForgeryToken()
     
@@ -34,6 +34,12 @@
         <img src="@String.Format("data:image/png;base64,{0}", Convert.ToBase64String(Model.ThisFilmImage.ImageBytes))" />
     }
 
+    <div class="form-group">
+        @Html.Label("Change Image", new { @class = "control-label col-md-2" })
+        <div class="col-md-10">
+            <input type="file" id="Image" name="upload" />
+        </div>
+    </div>
 
     @*@Html.ActionLink("Add a new image", "Create", "FilmImages", new { id = Model.ThisFilmImage.ImageId }, null)*@
 
@@ -59,7 +65,7 @@
         <div class="col-md-10">
             @Html.DropDownList("Genres")
             @Html.ValidationMessageFor(model => model.ThisFilm.GenreId, "", new { @class = "text-danger" })
-            
+
         </div>
     </div>
 

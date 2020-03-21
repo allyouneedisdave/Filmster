@@ -55,7 +55,7 @@
             {
                 if (role.ThisFilmPersonRole.IsActor == true)
                 {
-                    @Html.ActionLink(role.ThisFilm.Title.ToString(), "Details", new { id = role.ThisFilm.FilmId })
+    <p>@Html.ActionLink(role.ThisFilm.Title.ToString(), "Details", "Films", new { id = role.ThisFilm.FilmId }, null)</p>
                 }
 
             }
