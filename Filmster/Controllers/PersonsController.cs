@@ -2,6 +2,8 @@
 using System.Collections.Generic;
 using System.Data;
 using System.Data.Entity;
+using System.Drawing;
+using System.IO;
 using System.Linq;
 using System.Net;
 using System.Web;
@@ -196,12 +198,12 @@ namespace Filmster.Controllers
         // more details see https://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Edit([Bind(Include = "PersonId,ImageId,FirstName," +
-            "LastName,IsActor,IsDirector,Biography")] Person person,
-            HttpPostedFileBase upload)
+        public ActionResult Edit(PersonViewModel personViewModel, HttpPostedFileBase upload)
         {
             if (ModelState.IsValid)
             {
+                personViewModel.ThisPerson.ImageId = personViewModel.ThisPersonImage.ImageId;
+
                 //check to see if a file has been uploaded
                 if (upload != null && upload.ContentLength > 0)
                 {
@@ -213,6 +215,39 @@ namespace Filmster.Controllers
                     {
                         //DO SOMETHING WITH THE FILEPATH
                         //CONVERT IMAGE TO BLOB
+                        if (Request.Files.Count > 0)
+                        {
+                            var file = Request.Files[0];
+                            {
+                                var fileName = Path.GetFileName(file.FileName);
+                                var path = Path.Combine(Server.MapPath("~/ImagesTemp/"), fileName);
+                                file.SaveAs(path);
+
+                                Image newImage = Image.FromFile(path);
+                                PersonImage personImage = new PersonImage();
+                                personImage.ImageBytes = personImage.ConvertImageToByteArray(newImage);
+
+
+                                db.PersonImages.Add(personImage);
+                                db.SaveChanges();
+                                int imageId = personImage.ImageId;
+                                personViewModel.ThisPerson.ImageId = imageId;
+
+
+                                if (System.IO.File.Exists(path))
+                                {
+                                    try
+                                    {
+                                        System.IO.File.Delete(path);
+                                    }
+                                    catch (Exception)
+                                    {
+
+                                    }
+
+                                }
+                            }
+                        }
                     }
                     else
                     {
@@ -221,11 +256,11 @@ namespace Filmster.Controllers
                     }
                 }
 
-                db.Entry(person).State = EntityState.Modified;
+                db.Entry(personViewModel.ThisPerson).State = EntityState.Modified;
                 db.SaveChanges();
                 return RedirectToAction("Index");
             }
-            return View(person);
+            return View(personViewModel);
         }
 
         // GET: Persons/Delete/5
