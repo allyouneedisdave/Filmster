@@ -1,4 +1,4 @@
-﻿@model Filmster.Models.FilmPersonRole
+﻿@model Filmster.Models.ViewModels.FilmPersonRoleViewModel
 
 @{
     ViewBag.Title = "Create";
@@ -7,51 +7,120 @@
 <h2>Create</h2>
 
 
-@using (Html.BeginForm()) 
+@using (Html.BeginForm("Create", "FilmPersonRoles", FormMethod.Post, new { enctype = "multipart/form-data" }))
 {
     @Html.AntiForgeryToken()
-    
+    @Html.HiddenFor(model => model.ThisPerson.PersonId)
+    @Html.HiddenFor(model => model.ThisFilm.ImageId)
+    @Html.HiddenFor(model => model.ThisFilmPersonRole.IsActor)
+    @Html.HiddenFor(model => model.ThisFilmImage.ImageId)
+    @Html.HiddenFor(model => model.ThisPersonImage.ImageId)
+  
+
     <div class="form-horizontal">
-        <h4>FilmPersonRole</h4>
+        @if (Model.ThisFilmPersonRole.IsActor == true)
+        {
+            <h4>Acting Role</h4>
+        }
+        else
+        {
+            <h4>Director Role</h4>
+        }
+
         <hr />
         @Html.ValidationSummary(true, "", new { @class = "text-danger" })
-        <div class="form-group">
-            <label class="control-label col-md-2" for="MovieId">Movie Selection</label>
-            <div class="col-md-10">
-                @Html.DropDownList("FilmId")
-                @Html.ValidationMessageFor(model => model.FilmId, "", new { @class = "text-danger"})
-            </div>
-        </div>
 
-        <div class="form-group">
-            <label class="control-label col-md-2" for="PeopleId">Actor Selection</label>
-            <div class="col-md-10">
-                @Html.DropDownList("PersonId")
-                @Html.ValidationMessageFor(model => model.PersonId, "", new { @class = "text-danger"})
-            </div>
-        </div>
+        @if (ViewBag.Films == null)
+        {
+            //Create a view for the person
+            <dd>
+                @Html.DisplayFor(model => model.ThisFilm.Title)
+            </dd>
 
 
+            if (Model.ThisFilmImage.ImageBytes != null)
+            {
+                //Convert the image bytes into a png for displaying on the page.
+                <img src="@String.Format("data:image/png;base64,{0}", Convert.ToBase64String(Model.ThisFilmImage.ImageBytes))" />
+            }
 
-        <div class="form-group">
-            @Html.LabelFor(model => model.IsActor, htmlAttributes: new { @class = "control-label col-md-2" })
-            <div class="col-md-10">
-                <div class="checkbox">
-                    @Html.EditorFor(model => model.IsActor)
-                    @Html.ValidationMessageFor(model => model.IsActor, "", new { @class = "text-danger" })
+
+            <div class="form-group">
+                <label class="control-label col-md-2" for="MovieId">Person Selection</label>
+                <div class="col-md-10">
+                    @Html.DropDownList("Persons")
+                    @Html.ValidationMessageFor(model => model.ThisPerson.PersonId, "", new { @class = "text-danger" })
                 </div>
             </div>
-        </div>
 
-        <div class="form-group">
-            @Html.LabelFor(model => model.IsDirector, htmlAttributes: new { @class = "control-label col-md-2" })
-            <div class="col-md-10">
-                <div class="checkbox">
-                    @Html.EditorFor(model => model.IsDirector)
-                    @Html.ValidationMessageFor(model => model.IsDirector, "", new { @class = "text-danger" })
+
+
+        }
+        else if (ViewBag.Persons == null)
+        {
+            //Create a view for the film
+
+
+
+
+            <dd>
+                @Html.DisplayFor(model => model.ThisPerson.PersonFullName)
+            </dd>
+
+
+            if (Model.ThisPersonImage.ImageBytes != null)
+            {
+                //Convert the image bytes into a png for displaying on the page.
+                <img src="@String.Format("data:image/png;base64,{0}", Convert.ToBase64String(Model.ThisPersonImage.ImageBytes))" />
+            }
+
+
+            <div class="form-group">
+                <label class="control-label col-md-2" for="MovieId">Film Selection</label>
+                <div class="col-md-10">
+                    @Html.DropDownList("Films")
+                    @Html.ValidationMessageFor(model => model.ThisFilm.FilmId, "", new { @class = "text-danger" })
                 </div>
             </div>
-        </div>
+
+
+        }
+
+
+
+
+
+
+
+        @*<div class="form-group">
+                <label class="control-label col-md-2" for="PeopleId">Actor Selection</label>
+                <div class="col-md-10">
+                    @Html.DropDownList("PersonId")
+                    @Html.ValidationMessageFor(model => model.PersonId, "", new { @class = "text-danger"})
+                </div>
+            </div>*@
+
+
+
+        @*<div class="form-group">
+                @Html.LabelFor(model => model.IsActor, htmlAttributes: new { @class = "control-label col-md-2" })
+                <div class="col-md-10">
+                    <div class="checkbox">
+                        @Html.EditorFor(model => model.IsActor)
+                        @Html.ValidationMessageFor(model => model.IsActor, "", new { @class = "text-danger" })
+                    </div>
+                </div>
+            </div>
+
+            <div class="form-group">
+                @Html.LabelFor(model => model.IsDirector, htmlAttributes: new { @class = "control-label col-md-2" })
+                <div class="col-md-10">
+                    <div class="checkbox">
+                        @Html.EditorFor(model => model.IsDirector)
+                        @Html.ValidationMessageFor(model => model.IsDirector, "", new { @class = "text-danger" })
+                    </div>
+                </div>
+            </div>*@
 
         <div class="form-group">
             <div class="col-md-offset-2 col-md-10">
@@ -61,9 +130,20 @@
     </div>
 }
 
-<div>
-    @Html.ActionLink("Back to List", "Index")
-</div>
+@if (Model.ThisPerson.PersonId != null && Model.ThisPerson.PersonId != 0)
+{
+    <div>
+        @Html.ActionLink($"Back to {Model.ThisPerson.PersonFullName}", "Edit", "Persons", new { id = Model.ThisPerson.PersonId }, null)
+    </div>
+}
+else
+{
+    <div>
+        @Html.ActionLink($"Back to {Model.ThisFilm.Title}", "Edit", "Films", new { id = Model.ThisFilm.FilmId }, null)
+    </div>
+}
+
+
 
 @section Scripts {
     @Scripts.Render("~/bundles/jqueryval")

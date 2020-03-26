@@ -12,17 +12,12 @@
     <dl class="dl-horizontal">
 
 
-        @*<dt>
-            @Html.DisplayNameFor(model => model.ThisFilm.Title)
-        </dt>*@
+
 
         <dd>
             @Html.DisplayFor(model => model.ThisFilm.Title)
         </dd>
 
-        @*<dt>
-            @Html.DisplayNameFor(model => model.ThisFilmImage.ImageBytes)
-        </dt>*@
 
         @if (Model.ThisFilmImage.ImageBytes != null)
         {

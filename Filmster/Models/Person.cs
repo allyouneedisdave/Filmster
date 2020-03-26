@@ -61,5 +61,14 @@ namespace Filmster.Models
                 }
             }
         }
+
+
+        public string PersonFullName
+        {
+            get
+            {
+                return $"{FirstName} {LastName}";
+            }
+        }
     }
 }

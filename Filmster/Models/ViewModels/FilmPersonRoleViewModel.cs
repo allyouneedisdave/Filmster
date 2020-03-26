@@ -7,18 +7,18 @@ namespace Filmster.Models.ViewModels
 {
     public class FilmPersonRoleViewModel
     {
-        public FilmPersonRole ThisFilmPersonRole;
+        public FilmPersonRole ThisFilmPersonRole { get; set; }
 
-        public Person ThisPerson;
+        public Person ThisPerson { get; set; }
 
-        public PersonImage ThisPersonImage;
+        public PersonImage ThisPersonImage { get; set; }
 
-        public Film ThisFilm;
+        public Film ThisFilm { get; set; }
 
-        public FilmImage ThisFilmImage;
+        public FilmImage ThisFilmImage { get; set; }
 
-        public Genre ThisGenre;
+        public Genre ThisGenre { get; set; }
 
-        public Certificate ThisCertificate;
+        public Certificate ThisCertificate { get; set; }
     }
 }

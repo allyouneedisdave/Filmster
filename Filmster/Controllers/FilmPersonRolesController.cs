@@ -73,57 +73,78 @@ namespace Filmster.Controllers
         }
 
         // GET: FilmPersonRoles/Create
-        public ActionResult Create(int FilmId = 0, int PersonId = 0)
+        public ActionResult Create(int? FilmId, int? PersonId, bool isActor)
         {
-            //FILMS -------------------------------------------------------------------
-            //from the Films model DbSet
-            //select all columns from the database
-            //orderby the film title
-            var filmQuery = from m in db.Films
-                            orderby m.Title
-                            select m;
-            //if no id set
-            if (FilmId == 0)
+            FilmPersonRoleViewModel filmPersonRoleViewModel = new FilmPersonRoleViewModel();
+            FilmPersonRole filmPersonRole = new FilmPersonRole();
+            Film film = new Film();
+            FilmImage filmImage = new FilmImage();
+            Person person = new Person();
+            PersonImage personImage = new PersonImage();
+
+            if (isActor == true)
             {
-                //construct full films dropdown list without preselection
-                //do so from the query results and display the film title
-                //store in FilmId in the ViewBag
-                ViewBag.FilmId = new SelectList(filmQuery, "FilmId", "Title", null);
+                filmPersonRole.IsActor = true;
+                filmPersonRole.IsDirector = false;
             }
             else
             {
-                //construct as above but with the FilmId preselected
-                ViewBag.FilmId = new SelectList(filmQuery, "FilmId", "Title", FilmId);
+                filmPersonRole.IsActor = false;
+                filmPersonRole.IsDirector = true;
             }
 
-            //PERSONS -----------------------------------------------------------------
-            //from the Persons model DbSet
-            //select the firstname and lastname as a new field called Name
-            //and the person id - order by the last name
-            var personsQuery = from p in db.Persons
-                               orderby p.LastName
-                               select new
-                               {
-                                   Name = p.FirstName + " " + p.LastName,
-                                   p.PersonId
-                               };
-            //if no id set
-            if (PersonId == 0)
+            //db.FilmImages.Where(x => x.ImageId == role.FilmId).Single();
+
+            if (FilmId == null && PersonId == null)
             {
-                //construct full films dropdown list without preselection
-                //do so from the query results and display the Name (combined above)
-                //store in FilmId in the ViewBag
-                ViewBag.PersonId = new SelectList(personsQuery, "PersonId", "Name", null);
+                //Return to home page as user is manipulating the url
+                return View("~/Views/Home/Index.cshtml");
             }
-            else
+            else if (FilmId == null || FilmId == 0)
             {
-                //construct as above but with the PersonId preselected
-                ViewBag.PersonId = new SelectList(personsQuery, "PersonId", "Name", PersonId);
+                filmPersonRole.PersonId = PersonId;
+                person = db.Persons.Where(x => x.PersonId == PersonId).Single();
+                personImage = db.PersonImages.Where(x => x.ImageId == person.ImageId).Single();
+
+                //If FilmId is null then link the existing person to a film choice
+
+                //Get film collection for drop down box
+                var filmQuery = from m in db.Films
+                                 orderby m.Title
+                                 select m;
+
+                ViewBag.Films = new SelectList(filmQuery, "FilmId", "Title", null);
 
             }
+            else if (PersonId == null || PersonId == 0)
+            {
+                filmPersonRole.FilmId = FilmId;
+                film = db.Films.Where(x => x.FilmId == FilmId).Single();
+                filmImage = db.FilmImages.Where(x => x.ImageId == film.ImageId).Single();
+
+                //If PersonId is null then link the existing film to a person choice
+
+                //Get person collection for drop down box
+                var personQuery = from p in db.Persons
+                                orderby p.LastName
+                                  select new
+                                  {
+                                      FullName = p.FirstName + " " + p.LastName,
+                                      p.PersonId
+                                  };
+
+                ViewBag.Films = new SelectList(personQuery, person.PersonId.ToString(), "FullName", null);
+
+            }
+
+            filmPersonRoleViewModel.ThisFilm = film;
+            filmPersonRoleViewModel.ThisFilmImage = filmImage;
+            filmPersonRoleViewModel.ThisFilmPersonRole = filmPersonRole;
+            filmPersonRoleViewModel.ThisPerson = person;
+            filmPersonRoleViewModel.ThisPersonImage = personImage;
 
             //generate the view
-            return View();
+            return View(filmPersonRoleViewModel);
         }
 
         // POST: FilmPersonRoles/Create
@@ -131,16 +152,50 @@ namespace Filmster.Controllers
         // more details see https://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Create([Bind(Include = "RoleId,PersonId,FilmId,IsActor,IsDirector")] FilmPersonRole filmPersonRole)
+        public ActionResult Create(FilmPersonRoleViewModel filmPersonRoleViewModel)
         {
-            if (ModelState.IsValid)
+            if (filmPersonRoleViewModel.ThisFilm.FilmId == null || filmPersonRoleViewModel.ThisFilm.FilmId == 0)
             {
-                db.FilmPersonRoles.Add(filmPersonRole);
-                db.SaveChanges();
-                return RedirectToAction("Index");
+                filmPersonRoleViewModel.ThisFilmPersonRole.FilmId = Int32.Parse(Request["Films"]);
+            }
+            else
+            {
+                filmPersonRoleViewModel.ThisFilmPersonRole.FilmId = filmPersonRoleViewModel.ThisFilm.FilmId;
             }
 
-            return View(filmPersonRole);
+            if (filmPersonRoleViewModel.ThisPerson.PersonId == null || filmPersonRoleViewModel.ThisPerson.PersonId == 0)
+            {
+                filmPersonRoleViewModel.ThisFilmPersonRole.PersonId = Int32.Parse(Request["Persons"]);
+            }
+            else
+            {
+                filmPersonRoleViewModel.ThisFilmPersonRole.PersonId = filmPersonRoleViewModel.ThisPerson.PersonId;
+            }
+
+            //filmPersonRoleViewModel.ThisCertificate = new Certificate();
+            //filmPersonRoleViewModel.ThisFilmImage = new FilmImage();
+            //filmPersonRoleViewModel.ThisGenre = new Genre();
+            //filmPersonRoleViewModel.ThisPersonImage = new PersonImage();
+
+            ////Add unused values to validate the model state.
+            //filmPersonRoleViewModel.ThisPerson.FirstName = "Value";
+            //filmPersonRoleViewModel.ThisPerson.LastName = "Value";
+            //filmPersonRoleViewModel.ThisPerson.Biography = "Value";
+            //filmPersonRoleViewModel.ThisFilm.Title = "Value";
+            //filmPersonRoleViewModel.ThisFilm.Synopsis = "Value";
+            //filmPersonRoleViewModel.ThisFilm.Runtime = 0;
+            //filmPersonRoleViewModel.ThisFilm.ReleaseDate = DateTime.Now;
+
+
+            //if (ModelState.IsValid)
+            //{
+
+                db.FilmPersonRoles.Add(filmPersonRoleViewModel.ThisFilmPersonRole);
+                db.SaveChanges();
+                //return RedirectToAction("Index");
+            //}
+
+            return View(filmPersonRoleViewModel);
         }
 
         // GET: FilmPersonRoles/Edit/5
