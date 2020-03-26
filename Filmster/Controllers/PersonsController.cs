@@ -126,8 +126,38 @@ namespace Filmster.Controllers
                         upload.ContentType == "image/gif" ||
                         upload.ContentType == "image/png")
                     {
-                        //DO SOMETHING WITH THE FILEPATH
-                        //CONVERT IMAGE TO BLOB
+                        if (Request.Files.Count > 0)
+                        {
+                            var file = Request.Files[0];
+                            {
+                                var fileName = Path.GetFileName(file.FileName);
+                                var path = Path.Combine(Server.MapPath("~/ImagesTemp/"), fileName);
+                                file.SaveAs(path);
+
+                                Image newImage = Image.FromFile(path);
+                                PersonImage personImage = new PersonImage();
+                                personImage.ImageBytes = personImage.ConvertImageToByteArray(newImage);
+
+
+                                db.PersonImages.Add(personImage);
+                                db.SaveChanges();
+                                int imageId = personImage.ImageId;
+                                person.ImageId = imageId;
+
+                                if (System.IO.File.Exists(path))
+                                {
+                                    try
+                                    {
+                                        System.IO.File.Delete(path);
+                                    }
+                                    catch (Exception)
+                                    {
+
+                                    }
+
+                                }
+                            }
+                        }
                     }
                     else
                     {

@@ -75,6 +75,8 @@ namespace Filmster.Controllers
         // GET: FilmPersonRoles/Create
         public ActionResult Create(int? FilmId, int? PersonId, bool isActor)
         {
+
+
             FilmPersonRoleViewModel filmPersonRoleViewModel = new FilmPersonRoleViewModel();
             FilmPersonRole filmPersonRole = new FilmPersonRole();
             Film film = new Film();
@@ -133,7 +135,10 @@ namespace Filmster.Controllers
                                       p.PersonId
                                   };
 
-                ViewBag.Films = new SelectList(personQuery, person.PersonId.ToString(), "FullName", null);
+             
+
+
+                ViewBag.Persons = new SelectList(personQuery, "PersonId", "FullName", null);
 
             }
 
@@ -154,48 +159,38 @@ namespace Filmster.Controllers
         [ValidateAntiForgeryToken]
         public ActionResult Create(FilmPersonRoleViewModel filmPersonRoleViewModel)
         {
+            //flag if the action was called from the film edit view or the person edit view.
+            bool isFromFilmView;
+
             if (filmPersonRoleViewModel.ThisFilm.FilmId == null || filmPersonRoleViewModel.ThisFilm.FilmId == 0)
             {
                 filmPersonRoleViewModel.ThisFilmPersonRole.FilmId = Int32.Parse(Request["Films"]);
+
+                filmPersonRoleViewModel.ThisFilmPersonRole.PersonId = filmPersonRoleViewModel.ThisPerson.PersonId;
+
+                isFromFilmView = false;
             }
             else
             {
                 filmPersonRoleViewModel.ThisFilmPersonRole.FilmId = filmPersonRoleViewModel.ThisFilm.FilmId;
-            }
 
-            if (filmPersonRoleViewModel.ThisPerson.PersonId == null || filmPersonRoleViewModel.ThisPerson.PersonId == 0)
-            {
                 filmPersonRoleViewModel.ThisFilmPersonRole.PersonId = Int32.Parse(Request["Persons"]);
-            }
-            else
-            {
-                filmPersonRoleViewModel.ThisFilmPersonRole.PersonId = filmPersonRoleViewModel.ThisPerson.PersonId;
+
+                isFromFilmView = true;
             }
 
-            //filmPersonRoleViewModel.ThisCertificate = new Certificate();
-            //filmPersonRoleViewModel.ThisFilmImage = new FilmImage();
-            //filmPersonRoleViewModel.ThisGenre = new Genre();
-            //filmPersonRoleViewModel.ThisPersonImage = new PersonImage();
-
-            ////Add unused values to validate the model state.
-            //filmPersonRoleViewModel.ThisPerson.FirstName = "Value";
-            //filmPersonRoleViewModel.ThisPerson.LastName = "Value";
-            //filmPersonRoleViewModel.ThisPerson.Biography = "Value";
-            //filmPersonRoleViewModel.ThisFilm.Title = "Value";
-            //filmPersonRoleViewModel.ThisFilm.Synopsis = "Value";
-            //filmPersonRoleViewModel.ThisFilm.Runtime = 0;
-            //filmPersonRoleViewModel.ThisFilm.ReleaseDate = DateTime.Now;
-
-
-            //if (ModelState.IsValid)
-            //{
 
                 db.FilmPersonRoles.Add(filmPersonRoleViewModel.ThisFilmPersonRole);
                 db.SaveChanges();
-                //return RedirectToAction("Index");
-            //}
 
-            return View(filmPersonRoleViewModel);
+            if (isFromFilmView)
+            {
+                return RedirectToAction("Index", "Films");
+            }
+            else
+            {
+                return RedirectToAction("Index", "Persons");
+            }          
         }
 
         // GET: FilmPersonRoles/Edit/5

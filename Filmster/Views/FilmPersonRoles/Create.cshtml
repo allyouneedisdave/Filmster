@@ -12,7 +12,9 @@
     @Html.AntiForgeryToken()
     @Html.HiddenFor(model => model.ThisPerson.PersonId)
     @Html.HiddenFor(model => model.ThisFilm.ImageId)
+    @Html.HiddenFor(model => model.ThisFilm.FilmId)
     @Html.HiddenFor(model => model.ThisFilmPersonRole.IsActor)
+    @Html.HiddenFor(model => model.ThisFilmPersonRole.IsDirector)
     @Html.HiddenFor(model => model.ThisFilmImage.ImageId)
     @Html.HiddenFor(model => model.ThisPersonImage.ImageId)
   

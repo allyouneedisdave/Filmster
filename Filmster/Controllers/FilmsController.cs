@@ -270,9 +270,7 @@ namespace Filmster.Controllers
             {
                 ViewBag.Certificates = new SelectList(certificateQuery, "CertificateId", "CertificateName", film.CertificateId);
             }
-            
-
-
+           
 
             Genre genre = db.Genres.Where(x => x.GenreId == film.GenreId).Single();
 
@@ -280,11 +278,45 @@ namespace Filmster.Controllers
 
             FilmImage filmImage = db.FilmImages.Where(x => x.ImageId == film.ImageId).Single();
 
+            List<FilmPersonRole> filmPersonRoles = db.FilmPersonRoles.ToList();
+
+            List<FilmPersonRoleViewModel> rolesForThisFilm = new List<FilmPersonRoleViewModel>();
+
+            foreach (FilmPersonRole role in filmPersonRoles)
+            {
+                if (role.FilmId == id)
+                {
+                    Person person = db.Persons.Where(x => x.PersonId == role.PersonId).Single();
+
+                    PersonImage personImage = new PersonImage();
+
+                    if (person != null)
+                    {
+                        personImage = db.PersonImages.Where(x => x.ImageId == person.ImageId).Single();
+                    }
+
+
+                    FilmPersonRoleViewModel filmPersonRoleViewModel = new FilmPersonRoleViewModel();
+
+                    filmPersonRoleViewModel.ThisFilm = film;
+                    filmPersonRoleViewModel.ThisPerson = person;
+                    filmPersonRoleViewModel.ThisPersonImage = personImage;
+                    filmPersonRoleViewModel.ThisFilmPersonRole = role;
+
+                    rolesForThisFilm.Add(filmPersonRoleViewModel);
+
+                }
+            }
+
+
+
+
             FilmViewModel filmViewModel = new FilmViewModel();
             filmViewModel.ThisFilm = film;
             filmViewModel.ThisGenre = genre;
             filmViewModel.ThisCertificate = certificate;
             filmViewModel.ThisFilmImage = filmImage;
+            filmViewModel.ThisFilmPersonRoleViewModel = rolesForThisFilm;
 
 
             return View(filmViewModel);
