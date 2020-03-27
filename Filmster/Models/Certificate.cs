@@ -14,6 +14,7 @@ namespace Filmster.Models
         [Column("certificate_id")]
         public int CertificateId { get; set; }
 
+        [Display(Name ="Certificate")]
         [Column("certificate")]
         public string CertificateName { get; set; }
     }

@@ -14,6 +14,7 @@ namespace Filmster.Models
         [Column("genre_id")]
         public int GenreId { get; set; }
 
+        [Display(Name ="Genre")]
         [Column("genre")]
         public string GenreName { get; set; }
     }

@@ -20,9 +20,11 @@ namespace Filmster.Models
         [Column("film_id")]
         public int? FilmId { get; set; }
 
+        [Display(Name = "Is Actor?")]
         [Column("is_actor")]
         public bool IsActor { get; set; }
 
+        [Display(Name ="Is Director?")]
         [Column("is_director")]
         public bool IsDirector { get; set; }
 

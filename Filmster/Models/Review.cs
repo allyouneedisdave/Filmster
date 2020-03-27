@@ -20,15 +20,22 @@ namespace Filmster.Models
         [Column("user_id")]
         public int UserId { get; set; }
 
+        [Display(Name ="Review Title")]
         [Column("title")]
         public string ReviewTitle { get; set; }
 
+        [Display(Name = "Review Details")]
         [Column("detail")]
         public string ReviewDetail { get; set; }
 
+        [Display(Name = "Created Date")]
         [Column("created_date")]
+        [DataType(DataType.Date)]
+        [DisplayFormat(DataFormatString = "{0:dd/MM/yyyy}",
+            ApplyFormatInEditMode = true)]
         public DateTime CreatedDate { get; set; }
 
+        [Display(Name = "Rating")]
         [Column("rating")]
         public int Rating { get; set; }
 
