@@ -6,6 +6,17 @@
     <title>@ViewBag.Title - Filmster</title>
     @Styles.Render("~/Content/css")
     @Scripts.Render("~/bundles/modernizr")
+    @Scripts.Render("~/bundles/jquery")
+    @Scripts.Render("~/bundles/bootstrap")
+
+    <!-- star rating plugin and themes -->
+    @Scripts.Render("~/Scripts/Stars/jquery.barrating.min.js")
+    <link rel="stylesheet"
+          href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.css" />
+    @Styles.Render("~/Scripts/Stars/themes/fontawesome-stars.css")
+    @Styles.Render("~/Scripts/Stars/themes/fontawesome-stars-o.css")
+
+    @RenderSection("scripts", required: false)
 </head>
 <body>
     <div class="navbar navbar-inverse navbar-fixed-top">
@@ -35,8 +46,6 @@
         </footer>
     </div>
 
-    @Scripts.Render("~/bundles/jquery")
-    @Scripts.Render("~/bundles/bootstrap")
-    @RenderSection("scripts", required: false)
+
 </body>
 </html>
