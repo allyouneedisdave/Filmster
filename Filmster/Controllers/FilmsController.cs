@@ -1,5 +1,6 @@
 ﻿using Filmster.Models;
 using Filmster.Models.ViewModels;
+using PagedList;
 using System;
 using System.Collections.Generic;
 using System.Data;
@@ -38,13 +39,32 @@ namespace Filmster.Controllers
 
 
         // GET: Films
-        public ActionResult Index(string sortOrder, string searchString)
+        public ActionResult Index(string sortOrder, string searchString,
+                            string currentFilter, int? page)
         {
+            //for the viewbag to keep a note of current sort order
+            ViewBag.CurrentSort = sortOrder;
+
             //add a new value to the viewbag to retain current sort order
             //check if the sortOrder param is empty - if so we'll set the next choice
             //to title_desc (order by title descending) otherwise empty string
             //lets us construct a toggle link for the alternative
             ViewBag.TitleSortParam = String.IsNullOrEmpty(sortOrder) ? "title_desc" : "";
+
+            //if there is a search string
+            if(searchString != null)
+            {
+                //set page as 1
+                page = 1;
+            }
+            else
+            {
+                //if no search string, set to the current filter
+                searchString = currentFilter;
+            }
+
+            //the current filter is now the search string - note kept in view
+            ViewBag.CurrentFilter = searchString;
 
 
             List<FilmViewModel> filmList = new List<FilmViewModel>();
@@ -98,9 +118,16 @@ namespace Filmster.Controllers
                 filmList.Add(toAdd);
 
             }
-         
+
+            //how many records per page (could also be a param..)
+            int pageSize = 5;
+            //if page is null set to 1 otherwise keep page value
+            int pageNumber = (page ?? 1);
+
+            IPagedList pagedList = filmList.ToPagedList(pageNumber, pageSize );
+
             //send the updated films list to the view
-            return View(filmList);
+            return View(pagedList);
         }
 
         // GET: Films/Details/5

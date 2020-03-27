@@ -1,4 +1,7 @@
-﻿@model IEnumerable<Filmster.Models.ViewModels.FilmViewModel>
+﻿
+@model PagedList.IPagedList<Filmster.Models.ViewModels.FilmViewModel>
+@using PagedList.Mvc
+<link href="~Content/PagedList.css" rel="stylesheet" type="text/css" />
 
 @{
     ViewBag.Title = "Index";
@@ -30,10 +33,11 @@
     @Html.ActionLink("Create New", "Create")
 </p>
 
-@using (Html.BeginForm())
+@using (Html.BeginForm("Index", "Films", FormMethod.Get))
 {
     <p>
-        Find by title: @Html.TextBox("searchString")
+        Find by title: @Html.TextBox("searchString",
+                      ViewBag.CurrentFilter as string)
         <input type="submit" value="Search" />
     </p>
 }
@@ -41,17 +45,18 @@
 <table class="table">
     <tr>
         <th>
-            @Html.DisplayNameFor(model => model.ThisFilmImage.ImageBytes)
+            @Html.DisplayNameFor(model => model.FirstOrDefault().ThisFilmImage.ImageBytes)
         </th>
         <th>
             @Html.ActionLink("Film Title", "Index",
-                        new { sortOrder = ViewBag.TitleSortParam})
+                        new { sortOrder = ViewBag.TitleSortParam,
+                            currentFilter = ViewBag.CurrentFilter })
         </th>
         <th>
-            @Html.DisplayNameFor(model => model.ThisCertificate.CertificateName)
+            @Html.DisplayNameFor(model => model.FirstOrDefault().ThisCertificate.CertificateName)
         </th>
         <th>
-            @Html.DisplayNameFor(model => model.ThisFilm.Synopsis)
+            @Html.DisplayNameFor(model => model.FirstOrDefault().ThisFilm.Synopsis)
         </th>
         
         <th></th>
@@ -84,3 +89,14 @@
 }
 
 </table>
+
+Page @(Model.PageCount < Model.PageNumber ?
+        0 : Model.PageNumber) of @Model.PageCount
+
+@Html.PagedListPager(Model, page => Url.Action("Index",
+    new
+    {
+        page,
+        sortOrder = ViewBag.CurrentSort,
+        currentFilter = ViewBag.CurrentFilter
+    }))
