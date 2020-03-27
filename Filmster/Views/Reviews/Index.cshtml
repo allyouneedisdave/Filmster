@@ -1,10 +1,32 @@
-﻿@model IEnumerable<Filmster.Models.Review>
+﻿@model IEnumerable<Filmster.Models.ViewModels.ReviewViewModel>
 
 @{
-    ViewBag.Title = "Index";
+    ViewBag.Title = "Reviews";
 }
 
-<h2>Index</h2>
+<!--Star rating script-->
+<script type="text/javascript">
+    $(document).ready(function () {
+        //for each of the Rating dropdowns
+        $('.Rating').each(function () {
+            //get the value of the id from the hidden field
+            //next to it
+            var selectedId = $(this).next().val();
+            //now apply this as the selected id to the current
+            //dropdown box
+            $(this).val(selectedId);
+        });
+
+        //no apply the plugin and set to readonly
+        $('.Rating').barrating({
+            theme: 'fontawesome-stars',
+            readonly: true
+        });
+    });
+
+</script>
+
+<h2>Reviews</h2>
 
 <p>
     @Html.ActionLink("Create New", "Create")
@@ -12,50 +34,58 @@
 <table class="table">
     <tr>
         <th>
-            @Html.DisplayNameFor(model => model.FilmId)
+            @Html.DisplayNameFor(model => model.thisFilm.Title)
         </th>
         <th>
-            @Html.DisplayNameFor(model => model.UserId)
+            @Html.DisplayNameFor(model => model.thisUser.Username)
         </th>
         <th>
-            @Html.DisplayNameFor(model => model.ReviewTitle)
+            @Html.DisplayNameFor(model => model.thisReview.Rating)
         </th>
         <th>
-            @Html.DisplayNameFor(model => model.ReviewShortDetail)
+            @Html.DisplayNameFor(model => model.thisReview.ReviewTitle)
         </th>
         <th>
-            @Html.DisplayNameFor(model => model.CreatedDate)
+            @Html.DisplayNameFor(model => model.thisReview.CreatedDate)
         </th>
-        <th>
-            @Html.DisplayNameFor(model => model.Rating)
-        </th>
+
         <th></th>
     </tr>
 
 @foreach (var item in Model) {
     <tr>
         <td>
-            @Html.DisplayFor(modelItem => item.FilmId)
+            @Html.DisplayFor(modelItem => item.thisFilm.Title)
         </td>
         <td>
-            @Html.DisplayFor(modelItem => item.UserId)
+            @Html.DisplayFor(modelItem => item.thisUser.Username)
         </td>
         <td>
-            @Html.DisplayFor(modelItem => item.ReviewTitle)
-        </td>
-        <td>s
-            @Html.DisplayFor(modelItem => item.ReviewShortDetail)
+            <select class="Rating">
+                <option value="1">1</option>
+                <option value="2">2</option>
+                <option value="3">3</option>
+                <option value="4">4</option>
+                <option value="5">5</option>
+                <option value="6">6</option>
+                <option value="7">7</option>
+                <option value="8">8</option>
+                <option value="9">9</option>
+                <option value="10">10</option>
+            </select>
+            <input type="hidden" class="initialRating" value="@item.thisReview.Rating" />
         </td>
         <td>
-            @Html.DisplayFor(modelItem => item.CreatedDate)
+            @Html.DisplayFor(modelItem => item.thisReview.ReviewTitle)
         </td>
         <td>
-            @Html.DisplayFor(modelItem => item.Rating)
+            @Html.DisplayFor(modelItem => item.thisReview.CreatedDate)
         </td>
+
         <td>
-            @Html.ActionLink("Edit", "Edit", new { id=item.ReviewId }) |
-            @Html.ActionLink("Details", "Details", new { id=item.ReviewId }) |
-            @Html.ActionLink("Delete", "Delete", new { id=item.ReviewId })
+            @Html.ActionLink("Edit", "Edit", new { id=item.thisReview.ReviewId }) |
+            @Html.ActionLink("Details", "Details", new { id=item.thisReview.ReviewId }) |
+            @Html.ActionLink("Delete", "Delete", new { id=item.thisReview.ReviewId })
         </td>
     </tr>
 }

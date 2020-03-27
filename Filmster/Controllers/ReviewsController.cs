@@ -18,7 +18,32 @@ namespace Filmster.Controllers
         // GET: Reviews
         public ActionResult Index()
         {
-            return View(db.Reviews.ToList());
+            List<ReviewViewModel> reviewViewModelList = new List<ReviewViewModel>();
+
+            List<Review> reviewsList = new List<Review>();
+
+            reviewsList = db.Reviews.ToList();
+
+            ReviewViewModel reviewViewModel;
+
+
+            if (reviewsList.Count > 0)
+            {
+                foreach(Review r in reviewsList)
+                {
+                    reviewViewModel = new ReviewViewModel();
+                    reviewViewModel.thisReview = r;
+
+                    reviewViewModel.thisFilm = db.Films.Where(x => x.FilmId == r.FilmId).Single();
+                    reviewViewModel.thisUser = db.Users.Where(x => x.UserId == r.UserId).Single();
+
+                    reviewViewModelList.Add(reviewViewModel);
+                }
+            }
+
+
+
+            return View(reviewViewModelList);
         }
 
         // GET: Reviews/Details/5
