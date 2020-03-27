@@ -50,9 +50,31 @@ namespace Filmster.Controllers
         }
 
         // GET: Reviews/Create
-        public ActionResult Create()
+        public ActionResult Create(int? filmId)
         {
-            return View();
+            ReviewViewModel reviewViewModel = new ReviewViewModel();
+            reviewViewModel.thisFilm = new Film();
+            reviewViewModel.thisReview = new Review();
+            reviewViewModel.thisUser = new User();
+
+            
+            if (filmId == null || filmId == 0)
+            {
+                //Return to home
+                return View("~/Views/Home/index.cshtml");
+            }
+            else
+            {
+                reviewViewModel.thisFilm = db.Films.Where(x => x.FilmId == filmId).Single();
+            }
+
+            //Get a list of user names for drop down selection
+            var userQuery = from u in db.Users
+                            orderby u.Username
+                            select u;
+            ViewBag.Users = new SelectList(userQuery, "UserId", "Username", null);
+
+            return View(reviewViewModel);
         }
 
         // POST: Reviews/Create
@@ -60,16 +82,21 @@ namespace Filmster.Controllers
         // more details see https://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Create([Bind(Include = "ReviewId,FilmId,UserId,ReviewTitle,ReviewDetail,CreatedDate,Rating")] Review review)
+        public ActionResult Create(ReviewViewModel reviewViewModel)
         {
-            if (ModelState.IsValid)
-            {
-                db.Reviews.Add(review);
-                db.SaveChanges();
-                return RedirectToAction("Index");
-            }
+       
+            reviewViewModel.thisReview.UserId = Int32.Parse(Request["Users"]);
+            reviewViewModel.thisReview.FilmId = (int)reviewViewModel.thisFilm.FilmId;
 
-            return View(review);
+            reviewViewModel.thisReview.CreatedDate = DateTime.Now;
+
+            reviewViewModel.thisReview.Rating = Int32.Parse(Request["Rating"]);
+  
+                db.Reviews.Add(reviewViewModel.thisReview);
+                db.SaveChanges();
+
+            return RedirectToAction("Index", "Films");
+
         }
 
         // GET: Reviews/Edit/5

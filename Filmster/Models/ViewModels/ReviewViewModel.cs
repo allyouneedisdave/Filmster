@@ -7,10 +7,10 @@ namespace Filmster.Models.ViewModels
 {
     public class ReviewViewModel
     {
-        public Review thisReview;
+        public Review thisReview { get; set; }
 
-        public User thisUser;
+        public User thisUser { get; set; }
 
-        public Film thisFilm;
+        public Film thisFilm { get; set; }
     }
 }
