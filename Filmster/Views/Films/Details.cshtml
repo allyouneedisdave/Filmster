@@ -28,10 +28,9 @@
 <h2>@Model.ThisFilm.Title</h2>
 
 <div>
-
+ 
     <hr />
     <dl class="dl-horizontal">
-
 
 
         @if (Model.ThisFilmImage.ImageBytes != null)
@@ -39,7 +38,6 @@
             //Convert the image bytes into a png for displaying on the page.
             <img src="@String.Format("data:image/png;base64,{0}", Convert.ToBase64String(Model.ThisFilmImage.ImageBytes))" />
         }
-
 
         <dt>
             @Html.DisplayNameFor(model => model.ThisFilm.Synopsis)
@@ -79,6 +77,14 @@
 
         <dd>
             @Html.DisplayFor(model => model.ThisFilm.Runtime)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.averageReview)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.averageReview)/10
         </dd>
 
         <br />

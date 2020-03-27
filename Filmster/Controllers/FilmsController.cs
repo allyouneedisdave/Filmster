@@ -101,9 +101,12 @@ namespace Filmster.Controllers
             List<Film> theseFilms = new List<Film>();
             theseFilms = films.ToList();
 
+    
+
             foreach (Film thisFilm in theseFilms)
             {
-                // Genre genre = db.Genres.Where(x => x.genre_id == thisFilm.GenreId).Single();
+                var averageReview = db.Reviews.Where(x => x.FilmId == thisFilm.FilmId)
+                                                .Average(x => (int?)x.Rating) ?? 0;
 
                 Certificate certificate = db.Certificates.Where(x => x.CertificateId == thisFilm.CertificateId).Single();
 
@@ -115,6 +118,8 @@ namespace Filmster.Controllers
                 toAdd.ThisFilmImage = filmImage;
                 toAdd.ThisCertificate = certificate;
 
+                toAdd.averageReview = (int)averageReview;
+                
                 filmList.Add(toAdd);
 
             }
@@ -142,6 +147,11 @@ namespace Filmster.Controllers
             {
                 return HttpNotFound();
             }
+
+            var averageReview = db.Reviews.Where(x => x.FilmId == id)
+                                .Average(x => (int?)x.Rating) ?? 0;
+
+        
 
             Genre genre = db.Genres.Where(x => x.GenreId == film.GenreId).Single();
 
@@ -211,7 +221,8 @@ namespace Filmster.Controllers
             filmViewModel.ThisCertificate = certificate;
             filmViewModel.ThisFilmReviews = reviewsForThisFilm;
             filmViewModel.ThisFilmPersonRoleViewModel = rolesForThisFilm;
-       
+            filmViewModel.averageReview = (int)averageReview;
+
             return View(filmViewModel);
         }
 

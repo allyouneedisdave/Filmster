@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Web;
 
@@ -18,5 +19,8 @@ namespace Filmster.Models.ViewModels
         public List<ReviewViewModel> ThisFilmReviews { get; set; }
 
         public List<FilmPersonRoleViewModel> ThisFilmPersonRoleViewModel { get; set; }
+
+        [Display(Name ="Average Rating")]
+        public int? averageReview { get; set; }
     }
 }
