@@ -1,0 +1,33 @@
+﻿@model IEnumerable<Filmster.Models.Certificate>
+
+@{
+    ViewBag.Title = "Certificates";
+}
+
+<h2>Certificates</h2>
+
+<p>
+    @Html.ActionLink("Create New", "Create")
+</p>
+<table class="table">
+    <tr>
+        <th>
+            @Html.DisplayNameFor(model => model.CertificateName)
+        </th>
+        <th></th>
+    </tr>
+
+@foreach (var item in Model) {
+    <tr>
+        <td>
+            @Html.DisplayFor(modelItem => item.CertificateName)
+        </td>
+        <td>
+            @Html.ActionLink("Edit", "Edit", new { id=item.CertificateId }) |
+            @Html.ActionLink("Details", "Details", new { id=item.CertificateId }) |
+            @Html.ActionLink("Delete", "Delete", new { id=item.CertificateId })
+        </td>
+    </tr>
+}
+
+</table>

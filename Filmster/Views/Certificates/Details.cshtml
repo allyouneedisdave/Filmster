@@ -1,0 +1,26 @@
+﻿@model Filmster.Models.Certificate
+
+@{
+    ViewBag.Title = "Certificate" + Model.CertificateName;
+}
+
+<h2>Certificate @Model.CertificateName</h2>
+
+<div>
+
+    <hr />
+    <dl class="dl-horizontal">
+        <dt>
+            @Html.DisplayNameFor(model => model.CertificateName)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.CertificateName)
+        </dd>
+
+    </dl>
+</div>
+<p>
+    @Html.ActionLink("Edit", "Edit", new { id = Model.CertificateId }) |
+    @Html.ActionLink("Back to List", "Index")
+</p>

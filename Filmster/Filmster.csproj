@@ -139,9 +139,11 @@
     <Compile Include="App_Start\BundleConfig.cs" />
     <Compile Include="App_Start\FilterConfig.cs" />
     <Compile Include="App_Start\RouteConfig.cs" />
+    <Compile Include="Controllers\CertificatesController.cs" />
     <Compile Include="Controllers\FilmImagesController.cs" />
     <Compile Include="Controllers\FilmPersonRolesController.cs" />
     <Compile Include="Controllers\FilmsController.cs" />
+    <Compile Include="Controllers\GenresController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
     <Compile Include="Controllers\PersonImagesController.cs" />
     <Compile Include="Controllers\PersonsController.cs" />
@@ -270,6 +272,16 @@
     <Content Include="Views\Reviews\Edit.cshtml" />
     <Content Include="Views\Reviews\Index.cshtml" />
     <Content Include="Scripts\Stars\jquery.barrating.min.js.map" />
+    <Content Include="Views\Certificates\Create.cshtml" />
+    <Content Include="Views\Certificates\Delete.cshtml" />
+    <Content Include="Views\Certificates\Details.cshtml" />
+    <Content Include="Views\Certificates\Edit.cshtml" />
+    <Content Include="Views\Certificates\Index.cshtml" />
+    <Content Include="Views\Genres\Create.cshtml" />
+    <Content Include="Views\Genres\Delete.cshtml" />
+    <Content Include="Views\Genres\Details.cshtml" />
+    <Content Include="Views\Genres\Edit.cshtml" />
+    <Content Include="Views\Genres\Index.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

@@ -1,0 +1,36 @@
+﻿@model Filmster.Models.Certificate
+
+@{
+    ViewBag.Title = "Delete Certificate" + @Model.CertificateName;
+}
+
+    <script>
+    alert("Warning! If this certificate is assigned to any film records, the deletion will be cancelled.");
+    </script>
+
+<h2>Delete Certificate @Model.CertificateName</h2>
+
+<h3>Are you sure you want to delete certificate '@Model.CertificateName'</h3>
+<div>
+
+    <hr />
+    <dl class="dl-horizontal">
+        <dt>
+            @Html.DisplayNameFor(model => model.CertificateName)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.CertificateName)
+        </dd>
+
+    </dl>
+
+    @using (Html.BeginForm()) {
+        @Html.AntiForgeryToken()
+
+        <div class="form-actions no-color">
+            <input type="submit" value="Delete" class="btn btn-default" /> |
+            @Html.ActionLink("Back to List", "Index")
+        </div>
+    }
+</div>
