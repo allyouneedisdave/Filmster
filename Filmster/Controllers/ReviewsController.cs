@@ -41,8 +41,6 @@ namespace Filmster.Controllers
                 }
             }
 
-
-
             return View(reviewViewModelList);
         }
 
@@ -136,7 +134,20 @@ namespace Filmster.Controllers
             {
                 return HttpNotFound();
             }
-            return View(review);
+
+            ReviewViewModel reviewViewModel = new ReviewViewModel();
+
+            reviewViewModel.thisReview = review;
+
+            Film film = db.Films.Where(x => x.FilmId == review.FilmId).Single();
+
+            reviewViewModel.thisFilm = film;
+
+            User user = db.Users.Where(x => x.UserId == review.UserId).Single();
+
+            reviewViewModel.thisUser = user;
+
+            return View(reviewViewModel);
         }
 
         // POST: Reviews/Edit/5

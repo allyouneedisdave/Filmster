@@ -1,7 +1,7 @@
 ﻿@model Filmster.Models.ViewModels.ReviewViewModel
 
 @{
-    ViewBag.Title = "Create";
+    ViewBag.Title = "Create Review For" + Model.thisFilm.Title;
 }
 
 <!--Script for star rating-->
@@ -13,7 +13,7 @@
     });
 </script>
 
-<h2>Create</h2>
+<h2>Create Review For @Model.thisFilm.Title</h2>
 
 
 @using (Html.BeginForm("Create", "Reviews", null, FormMethod.Post,
