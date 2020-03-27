@@ -1,67 +1,80 @@
-﻿@model Filmster.Models.Review
+﻿@model Filmster.Models.ViewModels.ReviewViewModel
 
 @{
-    ViewBag.Title = "Delete";
+    ViewBag.Title = "Delete Review For" + Model.thisFilm.Title;
 }
+
+<!--Star rating script-->
+<script type="text/javascript">
+    $(document).ready(function () {
+        //for each of the Rating dropdowns
+        $('.Rating').each(function () {
+            //get the value of the id from the hidden field
+            //next to it
+            var selectedId = $(this).next().val();
+            //now apply this as the selected id to the current
+            //dropdown box
+            $(this).val(selectedId);
+        });
+
+        //no apply the plugin and set to readonly
+        $('.Rating').barrating({
+            theme: 'fontawesome-stars',
+            readonly: true
+        });
+    });
+</script>
 
 <h2>Delete</h2>
 
-<h3>Are you sure you want to delete this?</h3>
+<h3>Are you sure you want to delete this review for '@Model.thisFilm.Title'?</h3>
 <div>
-    <h4>Review</h4>
+
     <hr />
     <dl class="dl-horizontal">
+
+
         <dt>
-            @Html.DisplayNameFor(model => model.FilmId)
+            @Html.DisplayNameFor(model => model.thisReview.ReviewTitle)
         </dt>
 
         <dd>
-            @Html.DisplayFor(model => model.FilmId)
+            @Html.DisplayFor(model => model.thisReview.ReviewTitle)
         </dd>
 
         <dt>
-            @Html.DisplayNameFor(model => model.UserId)
+            @Html.DisplayNameFor(model => model.thisReview.ReviewDetail)
         </dt>
 
         <dd>
-            @Html.DisplayFor(model => model.UserId)
+            @Html.DisplayFor(model => model.thisReview.ReviewDetail)
         </dd>
 
         <dt>
-            @Html.DisplayNameFor(model => model.ReviewTitle)
+
+
+            @Html.DisplayNameFor(model => model.thisReview.Rating)
         </dt>
-
         <dd>
-            @Html.DisplayFor(model => model.ReviewTitle)
-        </dd>
-
-        <dt>
-            @Html.DisplayNameFor(model => model.ReviewDetail)
-        </dt>
-
-        <dd>
-            @Html.DisplayFor(model => model.ReviewDetail)
-        </dd>
-
-        <dt>
-            @Html.DisplayNameFor(model => model.CreatedDate)
-        </dt>
-
-        <dd>
-            @Html.DisplayFor(model => model.CreatedDate)
-        </dd>
-
-        <dt>
-            @Html.DisplayNameFor(model => model.Rating)
-        </dt>
-
-        <dd>
-            @Html.DisplayFor(model => model.Rating)
+            <select class="Rating">
+                <option value="1">1</option>
+                <option value="2">2</option>
+                <option value="3">3</option>
+                <option value="4">4</option>
+                <option value="5">5</option>
+                <option value="6">6</option>
+                <option value="7">7</option>
+                <option value="8">8</option>
+                <option value="9">9</option>
+                <option value="10">10</option>
+            </select>
+            <input type="hidden" class="initialRating" value="@Model.thisReview.Rating" />
         </dd>
 
     </dl>
 
-    @using (Html.BeginForm()) {
+    @using (Html.BeginForm())
+    {
         @Html.AntiForgeryToken()
 
         <div class="form-actions no-color">

@@ -37,6 +37,10 @@
     <hr />
     @Html.ValidationSummary(true, "", new { @class = "text-danger" })
     @Html.HiddenFor(model => model.thisReview.ReviewId)
+    @Html.HiddenFor(model => model.thisReview.CreatedDate)
+    @Html.HiddenFor(model => model.thisReview.FilmId)
+    @Html.HiddenFor(model => model.thisReview.Rating)
+    @Html.HiddenFor(model => model.thisReview.UserId)
 
 
 
@@ -56,7 +60,7 @@
         </div>
     </div>
 
-    @*<div class="form-group">
+    <div class="form-group">
         @Html.LabelFor(model => model.thisReview.Rating,
                     htmlAttributes: new { @class = "control-label col-md-2" })
         <div class="col-md-10">
@@ -76,31 +80,10 @@
             @Html.ValidationMessageFor(model => model.thisReview.Rating, "",
                             new { @class = "text-danger" })
         </div>
-    </div>*@
-
-    <dt>
+    </div>
 
 
-        @Html.DisplayNameFor(model => model.thisReview.Rating)
-    </dt>
-    <dd>
-        <select class="Rating">
-            <option value="1">1</option>
-            <option value="2">2</option>
-            <option value="3">3</option>
-            <option value="4">4</option>
-            <option value="5">5</option>
-            <option value="6">6</option>
-            <option value="7">7</option>
-            <option value="8">8</option>
-            <option value="9">9</option>
-            <option value="10">10</option>
-        </select>
-        <input type="hidden" class="initialRating" value="@Model.thisReview.Rating" />
-    </dd>
 
-
-   
 
 
     <div class="form-group">

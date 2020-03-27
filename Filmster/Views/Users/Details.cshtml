@@ -1,8 +1,30 @@
-﻿@model Filmster.Models.User
+﻿@model Filmster.Models.ViewModels.UserViewModel
 
 @{
     ViewBag.Title = "Details";
 }
+
+<!--Star rating script-->
+<script type="text/javascript">
+    $(document).ready(function () {
+        //for each of the Rating dropdowns
+        $('.Rating').each(function () {
+            //get the value of the id from the hidden field
+            //next to it
+            var selectedId = $(this).next().val();
+            //now apply this as the selected id to the current
+            //dropdown box
+            $(this).val(selectedId);
+        });
+
+        //no apply the plugin and set to readonly
+        $('.Rating').barrating({
+            theme: 'fontawesome-stars',
+            readonly: true
+        });
+    });
+</script>
+
 
 <h2>Details</h2>
 
@@ -11,16 +33,66 @@
     <hr />
     <dl class="dl-horizontal">
         <dt>
-            @Html.DisplayNameFor(model => model.Username)
+            @Html.DisplayNameFor(model => model.thisUser.Username)
         </dt>
 
         <dd>
-            @Html.DisplayFor(model => model.Username)
+            @Html.DisplayFor(model => model.thisUser.Username)
         </dd>
+
+        <hr />
+        <h4>User Reviews</h4>
+
+        @if (Model.thisReviews.Count > 0)
+        {
+            foreach (var review in Model.thisReviews)
+            {
+                <dt>
+
+
+                    @Html.DisplayNameFor(model => review.Rating)
+                </dt>
+                <dd>
+                    <select class="Rating">
+                        <option value="1">1</option>
+                        <option value="2">2</option>
+                        <option value="3">3</option>
+                        <option value="4">4</option>
+                        <option value="5">5</option>
+                        <option value="6">6</option>
+                        <option value="7">7</option>
+                        <option value="8">8</option>
+                        <option value="9">9</option>
+                        <option value="10">10</option>
+                    </select>
+                    <input type="hidden" class="initialRating" value="@review.Rating" />
+                </dd>
+
+
+
+                <dt>
+                    @Html.DisplayNameFor(model => review.ReviewTitle)
+                </dt>
+
+                <dd>
+                    @Html.DisplayFor(model => review.ReviewTitle)
+                </dd>
+                <dt>
+                    @Html.DisplayNameFor(model => review.ReviewShortDetail)
+                </dt>
+
+                <dd>
+                    @Html.DisplayFor(model => review.ReviewShortDetail)
+                    @Html.ActionLink("(See Full Review)", "Details", "Reviews", new { id = review.ReviewId }, null)
+                </dd>
+
+                <hr />
+            }
+        }
 
     </dl>
 </div>
 <p>
-    @Html.ActionLink("Edit", "Edit", new { id = Model.UserId }) |
+    @Html.ActionLink("Edit", "Edit", new { id = Model.thisUser.UserId }) |
     @Html.ActionLink("Back to List", "Index")
 </p>

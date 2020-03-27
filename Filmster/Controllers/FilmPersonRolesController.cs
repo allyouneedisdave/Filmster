@@ -126,19 +126,36 @@ namespace Filmster.Controllers
 
                 //If PersonId is null then link the existing film to a person choice
 
-                //Get person collection for drop down box
-                var personQuery = from p in db.Persons
-                                orderby p.LastName
-                                  select new
-                                  {
-                                      FullName = p.FirstName + " " + p.LastName,
-                                      p.PersonId
-                                  };
+                if (isActor)
+                {
+                    //Get Actors collection for drop down box
+                    var personQuery = from p in db.Persons
+                                      where p.IsActor == true
+                                      orderby p.LastName
+                                      select new
+                                      {
+                                          FullName = p.FirstName + " " + p.LastName,
+                                          p.PersonId
+                                      };
 
-             
+                    ViewBag.Persons = new SelectList(personQuery, "PersonId", "FullName", null);
 
+                }
+                else
+                {
+                    //Get Directors collection for drop down box
+                    var personQuery = from p in db.Persons
+                                      where p.IsDirector == true
+                                      orderby p.LastName
+                                      select new
+                                      {
+                                          FullName = p.FirstName + " " + p.LastName,
+                                          p.PersonId
+                                      };
 
-                ViewBag.Persons = new SelectList(personQuery, "PersonId", "FullName", null);
+                    ViewBag.Persons = new SelectList(personQuery, "PersonId", "FullName", null);
+
+                }
 
             }
 

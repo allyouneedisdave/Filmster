@@ -84,7 +84,7 @@ namespace Filmster.Controllers
             if (filmId == null || filmId == 0)
             {
                 //Return to home
-                return View("~/Views/Home/index.cshtml");
+                return View("~/Views/Films/index.cshtml");
             }
             else
             {
@@ -155,15 +155,18 @@ namespace Filmster.Controllers
         // more details see https://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Edit([Bind(Include = "ReviewId,FilmId,UserId,ReviewTitle,ReviewDetail,CreatedDate,Rating")] Review review)
+        public ActionResult Edit(ReviewViewModel reviewViewModel)
         {
+
+            reviewViewModel.thisReview.Rating = Int32.Parse(Request["Rating"]);
+
             if (ModelState.IsValid)
             {
-                db.Entry(review).State = EntityState.Modified;
+                db.Entry(reviewViewModel.thisReview).State = EntityState.Modified;
                 db.SaveChanges();
                 return RedirectToAction("Index");
             }
-            return View(review);
+            return View(reviewViewModel);
         }
 
         // GET: Reviews/Delete/5
@@ -178,7 +181,20 @@ namespace Filmster.Controllers
             {
                 return HttpNotFound();
             }
-            return View(review);
+
+            ReviewViewModel reviewViewModel = new ReviewViewModel();
+
+            reviewViewModel.thisReview = review;
+
+            Film film = db.Films.Where(x => x.FilmId == review.FilmId).Single();
+
+            reviewViewModel.thisFilm = film;
+
+            User user = db.Users.Where(x => x.UserId == review.UserId).Single();
+
+            reviewViewModel.thisUser = user;
+
+            return View(reviewViewModel);
         }
 
         // POST: Reviews/Delete/5

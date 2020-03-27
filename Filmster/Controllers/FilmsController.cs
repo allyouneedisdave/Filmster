@@ -521,9 +521,33 @@ namespace Filmster.Controllers
         [ValidateAntiForgeryToken]
         public ActionResult DeleteConfirmed(int id)
         {
-
+           
             Film film = db.Films.Find(id);
+
+            List<Review> reviews = db.Reviews.Where(x => x.FilmId == film.FilmId).ToList();
+            List<FilmPersonRole> roles = db.FilmPersonRoles.Where(x => x.FilmId == film.FilmId).ToList();
+            FilmImage filmImage = db.FilmImages.Where(x => x.ImageId == film.ImageId).Single();
+
+            //Delete reviews of the film to prevent orphan data
+            if (reviews.Count > 0)
+            {
+                foreach(Review review in reviews)
+                {
+                    db.Reviews.Remove(review);
+                }
+            }
+
+            //Delete actor/director roles to prevent orphan data
+            if (roles.Count > 0)
+            {
+                foreach (FilmPersonRole role in roles)
+                {
+                    db.FilmPersonRoles.Remove(role);
+                }
+            }
+
             db.Films.Remove(film);
+            db.FilmImages.Remove(filmImage);
             db.SaveChanges();
             return RedirectToAction("Index");
         }

@@ -7,6 +7,7 @@ using System.Net;
 using System.Web;
 using System.Web.Mvc;
 using Filmster.Models;
+using Filmster.Models.ViewModels;
 
 namespace Filmster.Controllers
 {
@@ -17,7 +18,23 @@ namespace Filmster.Controllers
         // GET: Users
         public ActionResult Index()
         {
-            return View(db.Users.ToList());
+            List<UserViewModel> userViewModelList = new List<UserViewModel>();
+
+            UserViewModel userViewModel;
+
+            List<User> users = db.Users.ToList();
+
+            if (users.Count > 0)
+            {
+                foreach(User user in users)
+                {
+                    userViewModel = new UserViewModel();
+                    userViewModel.thisUser = user;
+                    userViewModelList.Add(userViewModel);
+                }
+            }
+
+            return View(userViewModelList);
         }
 
         // GET: Users/Details/5
@@ -32,7 +49,12 @@ namespace Filmster.Controllers
             {
                 return HttpNotFound();
             }
-            return View(user);
+
+            UserViewModel userViewModel = new UserViewModel();
+            userViewModel.thisUser = user;
+            userViewModel.thisReviews = db.Reviews.Where(x => x.UserId == user.UserId).ToList();
+
+            return View(userViewModel);
         }
 
         // GET: Users/Create
@@ -70,7 +92,12 @@ namespace Filmster.Controllers
             {
                 return HttpNotFound();
             }
-            return View(user);
+
+            UserViewModel userViewModel = new UserViewModel();
+            userViewModel.thisUser = user;
+            userViewModel.thisReviews = db.Reviews.Where(x => x.UserId == user.UserId).ToList();
+
+            return View(userViewModel);
         }
 
         // POST: Users/Edit/5
@@ -78,15 +105,15 @@ namespace Filmster.Controllers
         // more details see https://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Edit([Bind(Include = "UserId,username")] User user)
+        public ActionResult Edit(UserViewModel userViewModel)
         {
             if (ModelState.IsValid)
             {
-                db.Entry(user).State = EntityState.Modified;
+                db.Entry(userViewModel.thisUser).State = EntityState.Modified;
                 db.SaveChanges();
                 return RedirectToAction("Index");
             }
-            return View(user);
+            return View(userViewModel);
         }
 
         // GET: Users/Delete/5
@@ -101,6 +128,9 @@ namespace Filmster.Controllers
             {
                 return HttpNotFound();
             }
+
+          
+
             return View(user);
         }
 
@@ -110,6 +140,17 @@ namespace Filmster.Controllers
         public ActionResult DeleteConfirmed(int id)
         {
             User user = db.Users.Find(id);
+
+            List<Review> reviews = db.Reviews.Where(x => x.UserId == user.UserId).ToList();
+
+            if (reviews.Count > 0)
+            {
+                foreach (Review review in reviews)
+                {
+                    db.Reviews.Remove(review);
+                }
+            }
+
             db.Users.Remove(user);
             db.SaveChanges();
             return RedirectToAction("Index");
