@@ -17,16 +17,71 @@ namespace Filmster.Controllers
     {
         private DBContext db = new DBContext();
 
-        // GET: Films
-        public ActionResult Index()
+        //to be accessed via AJAX - autocomplete jQuery UI plugin
+        public ActionResult Search(string term)
         {
-            List<FilmViewModel> FilmList = new List<FilmViewModel>();
+            //select all the films in the db
+            //and get the id and title only
+            //id and label used for autocomplete functionality
+            var films = from f in db.Films
+                        select new
+                        {
+                            id = f.FilmId,
+                            label = f.Title
+                        };
+            //now check the searchString given for any matches in title
+            films = films.Where(f => f.label.Contains(term));
 
-            List<Film> films;
+            //convert to and return the JSON for the search UI
+            return Json(films, JsonRequestBehavior.AllowGet);
+        }
 
-            films = db.Films.ToList();
 
-            foreach (Film thisFilm in films)
+        // GET: Films
+        public ActionResult Index(string sortOrder, string searchString)
+        {
+            //add a new value to the viewbag to retain current sort order
+            //check if the sortOrder param is empty - if so we'll set the next choice
+            //to title_desc (order by title descending) otherwise empty string
+            //lets us construct a toggle link for the alternative
+            ViewBag.TitleSortParam = String.IsNullOrEmpty(sortOrder) ? "title_desc" : "";
+
+
+            List<FilmViewModel> filmList = new List<FilmViewModel>();
+
+            //List<Film> films;
+
+            //Select all films in the db
+            var films = from f in db.Films
+                        select f;
+
+            //check if the search string is not empty
+            if (!String.IsNullOrEmpty(searchString))
+            {
+                //if we have a search term, then select where the title contains it
+                //analogous to LIKE %term% in SQL
+                films = films.Where(f => f.Title.Contains(searchString));
+            }
+
+
+            //check the sortOrder param
+            switch (sortOrder)
+            {
+                case "title_desc":
+                    //order by title descending
+                    films = films.OrderByDescending(f => f.Title);
+                    break;
+                default:
+                    //order by title ascending
+                    films = films.OrderBy(f => f.Title);
+                    break;
+
+            }
+
+            List<Film> theseFilms = new List<Film>();
+            theseFilms = films.ToList();
+
+            foreach (Film thisFilm in theseFilms)
             {
                 // Genre genre = db.Genres.Where(x => x.genre_id == thisFilm.GenreId).Single();
 
@@ -40,10 +95,12 @@ namespace Filmster.Controllers
                 toAdd.ThisFilmImage = filmImage;
                 toAdd.ThisCertificate = certificate;
 
-                FilmList.Add(toAdd);
+                filmList.Add(toAdd);
 
             }
-            return View(FilmList);
+         
+            //send the updated films list to the view
+            return View(filmList);
         }
 
         // GET: Films/Details/5
