@@ -1,68 +1,116 @@
-﻿@model IEnumerable<Filmster.Models.ViewModels.PersonViewModel>
+﻿@model PagedList.IPagedList<Filmster.Models.ViewModels.PersonViewModel>
+@using PagedList.Mvc
+<link href="~Content/PagedList.css" rel="stylesheet" type="text/css" />
+
 
 @{
     ViewBag.Title = "Index";
 }
+
+<script type="text/javascript">
+    $(document).ready(function () {
+        //find the control with name searchString
+        //and apply autocomplete plugin
+        $("[name='searchString']").autocomplete({
+            //get data from Search action
+            source: '@Url.Action("Search")',
+            //search when min 2 characters entered
+            minLength: 2,
+            //when option.selected
+            select: function (event, ui) {
+                //go to the Details action and append the id
+                //from the JSON results
+                window.location = '@Url.Action("Details")'
+                    + '/' + ui.item.id
+            }
+        });
+    })
+</script>
+
+
 
 <h2>Index</h2>
 
 <p>
     @Html.ActionLink("Create New", "Create")
 </p>
+
+@using (Html.BeginForm("Index", "Persons", FormMethod.Get))
+{
+    <p>
+        Find by title: @Html.TextBox("searchString",
+ViewBag.CurrentFilter as string)
+        <input type="submit" value="Search" />
+    </p>
+}
+
+
 <table class="table">
     <tr>
-       
+
         <th>
-            @Html.DisplayNameFor(model => model.ThisPersonImage.ImageBytes)
+            @Html.DisplayNameFor(model => model.FirstOrDefault().ThisPersonImage.ImageBytes)
         </th>
         <th>
-            @Html.DisplayNameFor(model => model.ThisPerson.FirstName)
+            @Html.DisplayNameFor(model => model.FirstOrDefault().ThisPerson.FirstName)
         </th>
         <th>
-            @Html.DisplayNameFor(model => model.ThisPerson.LastName)
+            @Html.DisplayNameFor(model => model.FirstOrDefault().ThisPerson.LastName)
         </th>
         @*<th>
-            @Html.DisplayNameFor(model => model.IsActor)
-        </th>
+                @Html.DisplayNameFor(model => model.IsActor)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.IsDirector)
+            </th>*@
         <th>
-            @Html.DisplayNameFor(model => model.IsDirector)
-        </th>*@
-        <th>
-            @Html.DisplayNameFor(model => model.ThisPerson.Biography)
+            @Html.DisplayNameFor(model => model.FirstOrDefault().ThisPerson.Biography)
         </th>
         <th></th>
     </tr>
 
-@foreach (var item in Model) {
-<tr>
-    <td>
-        @if (item.ThisPersonImage.ImageBytes != null)
-        {
-            //Convert the image bytes into a png for displaying on the page.
-            <img height="100px"; src="@String.Format("data:image/png;base64,{0}", Convert.ToBase64String(item.ThisPersonImage.ImageBytes))" />
-        }
-    </td>
-    <td>
-        @Html.DisplayFor(modelItem => item.ThisPerson.FirstName)
-    </td>
-    <td>
-        @Html.DisplayFor(modelItem => item.ThisPerson.LastName)
-    </td>
-    @*<td>
-            @Html.DisplayFor(modelItem => item.IsActor)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.IsDirector)
-        </td>*@
-    <td>
-        @Html.DisplayFor(modelItem => item.ThisPerson.PersonShortBio)
-    </td>
-    <td>
-        @Html.ActionLink("Edit", "Edit", new { id = item.ThisPerson.PersonId }) |
-        @Html.ActionLink("Details", "Details", new { id = item.ThisPerson.PersonId }) |
-        @Html.ActionLink("Delete", "Delete", new { id = item.ThisPerson.PersonId })
-    </td>
-</tr>
-}
+    @foreach (var item in Model)
+    {
+        <tr>
+            <td>
+                @if (item.ThisPersonImage.ImageBytes != null)
+                {
+                    //Convert the image bytes into a png for displaying on the page.
+                    <img height="100px" ; src="@String.Format("data:image/png;base64,{0}", Convert.ToBase64String(item.ThisPersonImage.ImageBytes))" />
+                }
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.ThisPerson.FirstName)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.ThisPerson.LastName)
+            </td>
+            @*<td>
+                    @Html.DisplayFor(modelItem => item.IsActor)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.IsDirector)
+                </td>*@
+            <td>
+                @Html.DisplayFor(modelItem => item.ThisPerson.PersonShortBio)
+            </td>
+            <td>
+                @Html.ActionLink("Edit", "Edit", new { id = item.ThisPerson.PersonId }) |
+                @Html.ActionLink("Details", "Details", new { id = item.ThisPerson.PersonId }) |
+                @Html.ActionLink("Delete", "Delete", new { id = item.ThisPerson.PersonId })
+            </td>
+        </tr>
+    }
 
 </table>
+
+Page @(Model.PageCount < Model.PageNumber ?
+   0 : Model.PageNumber) of @Model.PageCount
+
+@Html.PagedListPager(Model, page => Url.Action("Index",
+    new
+    {
+        page,
+        sortOrder = ViewBag.CurrentSort,
+        currentFilter = ViewBag.CurrentFilter
+    }))

@@ -10,6 +10,7 @@ using System.Web;
 using System.Web.Mvc;
 using Filmster.Models;
 using Filmster.Models.ViewModels;
+using PagedList;
 
 namespace Filmster.Controllers
 {
@@ -17,22 +18,101 @@ namespace Filmster.Controllers
     {
         private DBContext db = new DBContext();
 
-        // GET: Persons
-        public ActionResult Index()
+        //to be accessed via AJAX - autocomplete jQuery UI plugin
+        public ActionResult Search(string term)
         {
+            //select all the persons in the db
+            //and get the id and title only
+            //id and label used for autocomplete functionality
+            var persons = from p in db.Persons
+                        select new
+                        {
+                            id = p.PersonId,
+                            label = p.FirstName + " " + p.LastName
+                        };
+            //now check the searchString given for any matches in title
+            persons = persons.Where(p => p.label.Contains(term));
+
+            //convert to and return the JSON for the search UI
+            return Json(persons, JsonRequestBehavior.AllowGet);
+        }
+
+
+
+
+
+        // GET: Persons
+        public ActionResult Index(string sortOrder, string searchString,
+                            string currentFilter, int? page)
+        {
+
+            //for the viewbag to keep a note of current sort order
+            ViewBag.CurrentSort = sortOrder;
+
+            //add a new value to the viewbag to retain current sort order
+            //check if the sortOrder param is empty - if so we'll set the next choice
+            //to title_desc (order by title descending) otherwise empty string
+            //lets us construct a toggle link for the alternative
+            ViewBag.TitleSortParam = String.IsNullOrEmpty(sortOrder) ? "title_desc" : "";
+
+            //if there is a search string
+            if (searchString != null)
+            {
+                //set page as 1
+                page = 1;
+            }
+            else
+            {
+                //if no search string, set to the current filter
+                searchString = currentFilter;
+            }
+
+            //the current filter is now the search string - note kept in view
+            ViewBag.CurrentFilter = searchString;
+
+
             List<PersonViewModel> personsList = new List<PersonViewModel>();
 
-         
+            //List<Film> films;
 
-            List<Person> persons;
+            //Select all films in the db
+            var persons = from p in db.Persons
+                        select p;
 
-            persons = db.Persons.ToList();
+            //check if the search string is not empty
+            if (!String.IsNullOrEmpty(searchString))
+            {
+                //if we have a search term, then select where the title contains it
+                //analogous to LIKE %term% in SQL
+                persons = persons.Where(p => p.FirstName.Contains(searchString) || p.LastName.Contains(searchString));
+            }
 
-            if (persons.Count > 0)
+
+            //check the sortOrder param
+            switch (sortOrder)
+            {
+                case "title_desc":
+                    //order by title descending
+                    persons = persons.OrderByDescending(p => p.FirstName);
+                    break;
+                default:
+                    //order by title ascending
+                    persons = persons.OrderBy(p => p.FirstName);
+                    break;
+
+            }
+
+            List<Person> thesePersons = new List<Person>();
+            thesePersons = persons.ToList();
+
+
+
+
+            if (thesePersons.Count > 0)
             {
                 PersonViewModel personViewModel;
 
-                foreach (Person p in persons)
+                foreach (Person p in thesePersons)
                 {
                    
                     PersonImage personImage = db.PersonImages.Where(x => x.ImageId == p.ImageId).Single();
@@ -46,8 +126,16 @@ namespace Filmster.Controllers
            
             }
 
+            //how many records per page (could also be a param..)
+            int pageSize = 5;
+            //if page is null set to 1 otherwise keep page value
+            int pageNumber = (page ?? 1);
 
-            return View(personsList);
+            IPagedList pagedList = personsList.ToPagedList(pageNumber, pageSize);
+
+            //send the updated films list to the view
+            return View(pagedList);
+
         }
 
         // GET: Persons/Details/5
