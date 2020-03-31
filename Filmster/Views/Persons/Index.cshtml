@@ -52,17 +52,27 @@ ViewBag.CurrentFilter as string)
             @Html.DisplayNameFor(model => model.FirstOrDefault().ThisPersonImage.ImageBytes)
         </th>
         <th>
-            @Html.DisplayNameFor(model => model.FirstOrDefault().ThisPerson.FirstName)
+            @Html.ActionLink("First Name", "Index",
+                        new
+                             {
+                                 sortOrder = ViewBag.TitleSortParam,
+                            currentFilter = ViewBag.CurrentFilter
+                             })
         </th>
         <th>
-            @Html.DisplayNameFor(model => model.FirstOrDefault().ThisPerson.LastName)
+            @Html.ActionLink("Last Name", "Index",
+                        new
+                             {
+                                 sortOrder = ViewBag.TitleSortParam,
+                            currentFilter = ViewBag.CurrentFilter
+                             })
         </th>
         @*<th>
-                @Html.DisplayNameFor(model => model.IsActor)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.IsDirector)
-            </th>*@
+            @Html.DisplayNameFor(model => model.IsActor)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.IsDirector)
+        </th>*@
         <th>
             @Html.DisplayNameFor(model => model.FirstOrDefault().ThisPerson.Biography)
         </th>

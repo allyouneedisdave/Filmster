@@ -95,6 +95,12 @@ namespace Filmster.Controllers
                     //order by title descending
                     persons = persons.OrderByDescending(p => p.FirstName);
                     break;
+                case "last_name":
+                    persons = persons.OrderByDescending(p => p.LastName);
+                    break;
+                case "first_name":
+                    persons = persons.OrderByDescending(p => p.FirstName);
+                    break;
                 default:
                     //order by title ascending
                     persons = persons.OrderBy(p => p.FirstName);
