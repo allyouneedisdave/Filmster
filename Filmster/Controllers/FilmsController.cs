@@ -17,92 +17,83 @@ namespace Filmster.Controllers
     public class FilmsController : Controller
     {
         private DBContext db = new DBContext();
-
-        //to be accessed via AJAX - autocomplete jQuery UI plugin
+    
+        // Autocomplete jQuery UI plugin, accessed via AJAX.
+        // Gets all films from db and compares the title against
+        // the search term. Matches are converted to JSON and returned to UI.
         public ActionResult Search(string term)
         {
-            //select all the films in the db
-            //and get the id and title only
-            //id and label used for autocomplete functionality
             var films = from f in db.Films
                         select new
                         {
                             id = f.FilmId,
                             label = f.Title
                         };
-            //now check the searchString given for any matches in title
+
             films = films.Where(f => f.label.Contains(term));
 
-            //convert to and return the JSON for the search UI
             return Json(films, JsonRequestBehavior.AllowGet);
         }
 
 
-        // GET: Films
+        // Get films for the index view and builds a list of film viewmodels to return.
+        // Utilises arguments to return a sorting order, page of results
+        // and searched results. The sort order is tracked by the viewbag.
         public ActionResult Index(string sortOrder, string searchString,
                             string currentFilter, int? page)
         {
-            //for the viewbag to keep a note of current sort order
+
+            // This section sets the search, ordering and pagination variables
+            // from the values sent in the ActionResult arguments.
             ViewBag.CurrentSort = sortOrder;
 
-            //add a new value to the viewbag to retain current sort order
-            //check if the sortOrder param is empty - if so we'll set the next choice
-            //to title_desc (order by title descending) otherwise empty string
-            //lets us construct a toggle link for the alternative
             ViewBag.TitleSortParam = String.IsNullOrEmpty(sortOrder) ? "title_desc" : "";
 
-            //if there is a search string
             if(searchString != null)
             {
-                //set page as 1
                 page = 1;
             }
             else
             {
-                //if no search string, set to the current filter
                 searchString = currentFilter;
             }
 
-            //the current filter is now the search string - note kept in view
             ViewBag.CurrentFilter = searchString;
 
+        
 
-            List<FilmViewModel> filmList = new List<FilmViewModel>();
+            List<FilmViewModel> filmList = new List<FilmViewModel>();      
 
-            //List<Film> films;
 
-            //Select all films in the db
+
+            // Get all films, then overwrite with returned results if a searchString
+            // is specified.
             var films = from f in db.Films
                         select f;
 
-            //check if the search string is not empty
             if (!String.IsNullOrEmpty(searchString))
             {
-                //if we have a search term, then select where the title contains it
-                //analogous to LIKE %term% in SQL
                 films = films.Where(f => f.Title.Contains(searchString));
             }
 
 
-            //check the sortOrder param
+            // Apply sorting based on the specified argument from the view.
             switch (sortOrder)
             {
                 case "title_desc":
-                    //order by title descending
                     films = films.OrderByDescending(f => f.Title);
                     break;
                 default:
-                    //order by title ascending
                     films = films.OrderBy(f => f.Title);
                     break;
-
             }
+
 
             List<Film> theseFilms = new List<Film>();
             theseFilms = films.ToList();
-
-    
-
+ 
+            // Loop through film results and get viewmodel information from other db entities.
+            // Assign the entities to the new viewmodel and add the viewmodel to the viewmodels list.
             foreach (Film thisFilm in theseFilms)
             {
                 var averageReview = db.Reviews.Where(x => x.FilmId == thisFilm.FilmId)
@@ -124,18 +115,20 @@ namespace Filmster.Controllers
 
             }
 
-            //how many records per page (could also be a param..)
+
+            // Set the amount of records shown on a page and convert the viewmodel
+            // to an IpagedList object to return to the view.
             int pageSize = 5;
-            //if page is null set to 1 otherwise keep page value
+            // If page is null set to 1 otherwise keep page value.
             int pageNumber = (page ?? 1);
 
             IPagedList pagedList = filmList.ToPagedList(pageNumber, pageSize );
 
-            //send the updated films list to the view
             return View(pagedList);
         }
 
-        // GET: Films/Details/5
+
+        // Get film details by film id, builds a viewmodel for return.
         public ActionResult Details(int? id)
         {
             if (id == null)
@@ -148,11 +141,12 @@ namespace Filmster.Controllers
                 return HttpNotFound();
             }
 
+            // Get's an average review score from all Reviews for this film.
             var averageReview = db.Reviews.Where(x => x.FilmId == id)
                                 .Average(x => (int?)x.Rating) ?? 0;
 
         
-
+            // Get records for the view model.
             Genre genre = db.Genres.Where(x => x.GenreId == film.GenreId).Single();
 
             Certificate certificate = db.Certificates.Where(x => x.CertificateId == film.CertificateId).Single();
@@ -163,6 +157,8 @@ namespace Filmster.Controllers
 
             List<Review> reviews = db.Reviews.ToList();
 
+
+            // If reviews exist for this film, return a list of reviews for the viewmodel.
             List<ReviewViewModel> reviewsForThisFilm = new List<ReviewViewModel>();
 
             if (reviews.Count > 0)
@@ -185,6 +181,7 @@ namespace Filmster.Controllers
                 }
             }
 
+            // If roles exist for this film, return a list of roles for the viewmodel.
             List<FilmPersonRoleViewModel> rolesForThisFilm = new List<FilmPersonRoleViewModel>();
 
             foreach (FilmPersonRole role in filmPersonRoles)
@@ -226,7 +223,8 @@ namespace Filmster.Controllers
             return View(filmViewModel);
         }
 
-        // GET: Films/Create
+        // Gets genre and certificate options for the creation of a new film
+        // and adds the collections to the viewbag to be used in a dropdownlist.
         public ActionResult Create()
         {
             var genreQuery = from m in db.Genres
@@ -242,9 +240,8 @@ namespace Filmster.Controllers
             return View();
         }
 
-        // POST: Films/Create
-        // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
-        // more details see https://go.microsoft.com/fwlink/?LinkId=317598.
+        // POST: Creates a new film record from viewmodel data.
+        // Validates input values and abandons db insert if data is missing or incorrect.
         [HttpPost]
         [ValidateAntiForgeryToken]
         public ActionResult Create(
@@ -252,38 +249,38 @@ namespace Filmster.Controllers
             "Title,Synopsis,Runtime,ReleaseDate")] Film film,
             HttpPostedFileBase upload)
         {
-            //if we have valid data in the form
             if (ModelState.IsValid)
             {
-                //check to see if a file has been uploaded
                 if (upload != null && upload.ContentLength > 0)
                 {
-                    //check to see if valid MIME type (JPG / PNG or GIF images)
                     if (upload.ContentType == "image/jpeg" ||
                         upload.ContentType == "image/jpg" ||
                         upload.ContentType == "image/gif" ||
                         upload.ContentType == "image/png")
                     {
-                        //DO SOMETHING WITH THE FILE
-                        //CREATE A METHOD TO CONVERT TO BLOB
+                        // If an image is being uploaded then save the image to a temporary folder, 
+                        // convert the image to bytes and assign it to the model for inserting into the db.
                         if (Request.Files.Count > 0)
                         {
                             var file = Request.Files[0];
                             {
+                                // Save image to temp folder.
                                 var fileName = Path.GetFileName(file.FileName);
                                 var path = Path.Combine(Server.MapPath("~/ImagesTemp/"), fileName);
                                 file.SaveAs(path);
 
+                                // Convert image to bytes.
                                 Image newImage = Image.FromFile(path);
                                 FilmImage filmImage = new FilmImage();
                                 filmImage.ImageBytes = filmImage.ConvertImageToByteArray(newImage);
 
-
+                                // Insert image into db and return the new image id.
                                 db.FilmImages.Add(filmImage);
                                 db.SaveChanges();
                                 int imageId = filmImage.ImageId;
                                 film.ImageId = imageId;
 
+                                // Attempt to delete temporary image.
                                 if (System.IO.File.Exists(path))
                                 {
                                     try
@@ -292,36 +289,33 @@ namespace Filmster.Controllers
                                     }
                                     catch (Exception)
                                     {
-
+                                        // Do nothing, temporary folder will be 
+                                        // cleared when application is re-launched.
                                     }
-
                                 }
                             }
                         }
-
-
                     }
                     else
                     {
-                        //construct a message that can be displayed in the view
+                        // Constructs error messages for the view.
                         ViewBag.Message = "Not valid image format";
                     }
                 }
-                //add the film to the database and save
-
+                // Add the film to the database and save.
                 film.GenreId = Int32.Parse(Request["Genres"]);
                 film.CertificateId = Int32.Parse(Request["Certificates"]);
 
                 db.Films.Add(film);
                 db.SaveChanges();
-                //redirect to index
+                
                 return RedirectToAction("Index");
             }
 
             return View(film);
         }
 
-        // GET: Films/Edit/5
+        // Get viewmodel data for the edit view.
         public ActionResult Edit(int? id)
         {
             if (id == null)
@@ -334,10 +328,7 @@ namespace Filmster.Controllers
                 return HttpNotFound();
             }
 
-
-
-
-            //Get genre collection for drop down box
+            // Get genre collection for drop down box.
             var genreQuery = from m in db.Genres
                              orderby m.GenreName
                              select m;
@@ -353,7 +344,7 @@ namespace Filmster.Controllers
 
           
 
-            //Get certificate selection for drop down box
+            // Get certificate selection for drop down box.
             var certificateQuery = from m in db.Certificates
                                    orderby m.CertificateName
                                    select m;
@@ -366,7 +357,7 @@ namespace Filmster.Controllers
                 ViewBag.Certificates = new SelectList(certificateQuery, "CertificateId", "CertificateName", film.CertificateId);
             }
            
-
+            // Get record for the viewmodel data.
             Genre genre = db.Genres.Where(x => x.GenreId == film.GenreId).Single();
 
             Certificate certificate = db.Certificates.Where(x => x.CertificateId == film.CertificateId).Single();
@@ -377,6 +368,8 @@ namespace Filmster.Controllers
 
             List<FilmPersonRoleViewModel> rolesForThisFilm = new List<FilmPersonRoleViewModel>();
 
+            // Loop through film roles for roles related to this film.
+            // Add matches to the role viewmodel list.
             foreach (FilmPersonRole role in filmPersonRoles)
             {
                 if (role.FilmId == id)
@@ -390,7 +383,6 @@ namespace Filmster.Controllers
                         personImage = db.PersonImages.Where(x => x.ImageId == person.ImageId).Single();
                     }
 
-
                     FilmPersonRoleViewModel filmPersonRoleViewModel = new FilmPersonRoleViewModel();
 
                     filmPersonRoleViewModel.ThisFilm = film;
@@ -403,9 +395,6 @@ namespace Filmster.Controllers
                 }
             }
 
-
-
-
             FilmViewModel filmViewModel = new FilmViewModel();
             filmViewModel.ThisFilm = film;
             filmViewModel.ThisGenre = genre;
@@ -413,13 +402,11 @@ namespace Filmster.Controllers
             filmViewModel.ThisFilmImage = filmImage;
             filmViewModel.ThisFilmPersonRoleViewModel = rolesForThisFilm;
 
-
             return View(filmViewModel);
         }
 
-        // POST: Films/Edit/5
-        // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
-        // more details see https://go.microsoft.com/fwlink/?LinkId=317598.
+        // POST: Update film record with new film data from the viewmodel.
+        // Validates input data and aborts the update if data is invalid.
         [HttpPost]
         [ValidateAntiForgeryToken]
         public ActionResult Edit(FilmViewModel filmViewModel, HttpPostedFileBase upload)
@@ -428,41 +415,44 @@ namespace Filmster.Controllers
             {
 
                 filmViewModel.ThisFilm.ImageId = filmViewModel.ThisFilmImage.ImageId;
+
+                // Gets the dropdownlist selection and adds the id to the viewmodel.
                 filmViewModel.ThisFilm.GenreId = Int32.Parse(Request["Genres"]);
                 filmViewModel.ThisFilm.CertificateId = Int32.Parse(Request["Certificates"]);
 
-                //
-
-                //check to see if a file has been uploaded
+                
                 if (upload != null && upload.ContentLength > 0)
                 {
-                    //check to see if valid MIME type (JPG / PNG or GIF images)
                     if (upload.ContentType == "image/jpeg" ||
                         upload.ContentType == "image/jpg" ||
                         upload.ContentType == "image/gif" ||
                         upload.ContentType == "image/png")
                     {
-                        //DO SOMETHING WITH THE FILE
-                        //CREATE A METHOD TO CONVERT TO BLOB
+                        // If an image is being uploaded then save the image to a
+                        // temporary folder, convert the image to bytes, save the image
+                        // as a new record and assign its new id to the film model for
+                        // updating the db.
                         if (Request.Files.Count > 0)
                         {
                             var file = Request.Files[0];
                             {
+                                // Save image to temp folder.
                                 var fileName = Path.GetFileName(file.FileName);
                                 var path = Path.Combine(Server.MapPath("~/ImagesTemp/"), fileName);
                                 file.SaveAs(path);
 
+                                // Convert image to bytes.
                                 Image newImage = Image.FromFile(path);
                                 FilmImage filmImage = new FilmImage();
                                 filmImage.ImageBytes = filmImage.ConvertImageToByteArray(newImage);
 
-
+                                // Insert image into db and return the new image id.
                                 db.FilmImages.Add(filmImage);
                                 db.SaveChanges();
                                 int imageId = filmImage.ImageId;
                                 filmViewModel.ThisFilm.ImageId = imageId;
                  
-
+                                // Attempt to delete temporary image.
                                 if (System.IO.File.Exists(path))
                                 {
                                     try
@@ -471,7 +461,8 @@ namespace Filmster.Controllers
                                     }
                                     catch (Exception)
                                     {
-
+                                        // Do nothing, temporary folder will be cleared
+                                        // when application is re-launched.
                                     }
 
                                 }
@@ -482,17 +473,13 @@ namespace Filmster.Controllers
                     }
                     else
                     {
-                        //construct a message that can be displayed in the view
+                        // Constructs error messages for the view.
                         ViewBag.Message = "Not valid image format";
                     }
                 }
 
-                //
 
-                //Film film = db.Films.SingleOrDefault(c => c.FilmId == filmViewModel.ThisFilm.FilmId);
-
-            
-
+                //Update the db and save.
                 db.Entry(filmViewModel.ThisFilm).State = EntityState.Modified;
                 db.SaveChanges();
 
@@ -501,7 +488,7 @@ namespace Filmster.Controllers
             return View(filmViewModel);
         }
 
-        // GET: Films/Delete/5
+        // GET: Gets the film data in preparation for deletion.
         public ActionResult Delete(int? id)
         {
             if (id == null)
@@ -516,7 +503,8 @@ namespace Filmster.Controllers
             return View(film);
         }
 
-        // POST: Films/Delete/5
+        // POST: Attempt to delete the film and image.
+        // Any film roles and reviews for this film will also be deleted to prevent orphan data.
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
         public ActionResult DeleteConfirmed(int id)
@@ -528,7 +516,7 @@ namespace Filmster.Controllers
             List<FilmPersonRole> roles = db.FilmPersonRoles.Where(x => x.FilmId == film.FilmId).ToList();
             FilmImage filmImage = db.FilmImages.Where(x => x.ImageId == film.ImageId).Single();
 
-            //Delete reviews of the film to prevent orphan data
+            // Delete reviews of the film to prevent orphan data.
             if (reviews.Count > 0)
             {
                 foreach(Review review in reviews)
@@ -537,7 +525,7 @@ namespace Filmster.Controllers
                 }
             }
 
-            //Delete actor/director roles to prevent orphan data
+            // Delete actor/director roles to prevent orphan data.
             if (roles.Count > 0)
             {
                 foreach (FilmPersonRole role in roles)

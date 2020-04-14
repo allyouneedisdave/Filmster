@@ -42,7 +42,7 @@ namespace Filmster.Controllers
 
 
         // GET: Persons
-        public ActionResult Index(string sortOrder, string searchString,
+        public ActionResult Index(string sortOrder, string searchString, string columnClicked,
                             string currentFilter, int? page)
         {
 
@@ -54,6 +54,10 @@ namespace Filmster.Controllers
             //to title_desc (order by title descending) otherwise empty string
             //lets us construct a toggle link for the alternative
             ViewBag.TitleSortParam = String.IsNullOrEmpty(sortOrder) ? "title_desc" : "";
+
+
+
+
 
             //if there is a search string
             if (searchString != null)
@@ -87,26 +91,39 @@ namespace Filmster.Controllers
                 persons = persons.Where(p => p.FirstName.Contains(searchString) || p.LastName.Contains(searchString));
             }
 
-
-            //check the sortOrder param
-            switch (sortOrder)
+            // This switch allows for first name and last name columns to be sorted.
+            switch (columnClicked)
             {
-                case "title_desc":
-                    //order by title descending
-                    persons = persons.OrderByDescending(p => p.FirstName);
+                case "First Name":
+                    if (sortOrder == "title_desc")
+                    {
+                        // Order by First Name descending
+                        persons = persons.OrderByDescending(p => p.FirstName);
+                    }
+                    else
+                    {
+                        // Order by First Name ascending
+                        persons = persons.OrderBy(p => p.FirstName);
+                    }
                     break;
-                case "last_name":
-                    persons = persons.OrderByDescending(p => p.LastName);
-                    break;
-                case "first_name":
-                    persons = persons.OrderByDescending(p => p.FirstName);
+                case "Last Name":
+                    if (sortOrder == "title_desc")
+                    {
+                        // Order by Last Name descending
+                        persons = persons.OrderByDescending(p => p.LastName);
+                    }
+                    else
+                    {
+                        // Order by Last Name ascending
+                        persons = persons.OrderBy(p => p.LastName);
+                    }
                     break;
                 default:
-                    //order by title ascending
+                    // Order by first name ascending as default.
                     persons = persons.OrderBy(p => p.FirstName);
                     break;
-
             }
+
 
             List<Person> thesePersons = new List<Person>();
             thesePersons = persons.ToList();

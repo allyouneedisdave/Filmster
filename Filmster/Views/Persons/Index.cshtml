@@ -7,19 +7,14 @@
     ViewBag.Title = "Index";
 }
 
+
+<!--Autocomplete jQuery for search box-->
 <script type="text/javascript">
     $(document).ready(function () {
-        //find the control with name searchString
-        //and apply autocomplete plugin
         $("[name='searchString']").autocomplete({
-            //get data from Search action
             source: '@Url.Action("Search")',
-            //search when min 2 characters entered
             minLength: 2,
-            //when option.selected
             select: function (event, ui) {
-                //go to the Details action and append the id
-                //from the JSON results
                 window.location = '@Url.Action("Details")'
                     + '/' + ui.item.id
             }
@@ -56,7 +51,8 @@ ViewBag.CurrentFilter as string)
                         new
                              {
                                  sortOrder = ViewBag.TitleSortParam,
-                            currentFilter = ViewBag.CurrentFilter
+                            currentFilter = ViewBag.CurrentFilter,
+                            columnClicked = "First Name"
                              })
         </th>
         <th>
@@ -64,7 +60,8 @@ ViewBag.CurrentFilter as string)
                         new
                              {
                                  sortOrder = ViewBag.TitleSortParam,
-                            currentFilter = ViewBag.CurrentFilter
+                            currentFilter = ViewBag.CurrentFilter,
+                            columnClicked = "Last Name"
                              })
         </th>
         @*<th>
