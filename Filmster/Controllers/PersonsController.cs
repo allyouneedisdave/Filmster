@@ -18,22 +18,21 @@ namespace Filmster.Controllers
     {
         private DBContext db = new DBContext();
 
-        //to be accessed via AJAX - autocomplete jQuery UI plugin
+        // Autocomplete jQuery UI plugin, accessed via AJAX.
+        // Gets all films from db and compares the title against
+        // the search term. Matches are converted to JSON and returned to UI.
+        // First and Last names will be searched.
         public ActionResult Search(string term)
         {
-            //select all the persons in the db
-            //and get the id and title only
-            //id and label used for autocomplete functionality
             var persons = from p in db.Persons
                         select new
                         {
                             id = p.PersonId,
                             label = p.FirstName + " " + p.LastName
                         };
-            //now check the searchString given for any matches in title
+
             persons = persons.Where(p => p.label.Contains(term));
 
-            //convert to and return the JSON for the search UI
             return Json(persons, JsonRequestBehavior.AllowGet);
         }
 
@@ -41,53 +40,41 @@ namespace Filmster.Controllers
 
 
 
-        // GET: Persons
+        // Get persons for the index view and builds a list of person viewmodels to return.
+        // Utilises arguments to return a sorting order, page of results
+        // and searched results. The sort order is tracked by the viewbag.
+        // A column clicked argument is also passed to sort by different columns.
         public ActionResult Index(string sortOrder, string searchString, string columnClicked,
                             string currentFilter, int? page)
         {
-
-            //for the viewbag to keep a note of current sort order
+            // This section sets the search, ordering and pagination variables
+            // from the values sent in the ActionResult arguments.
             ViewBag.CurrentSort = sortOrder;
 
-            //add a new value to the viewbag to retain current sort order
-            //check if the sortOrder param is empty - if so we'll set the next choice
-            //to title_desc (order by title descending) otherwise empty string
-            //lets us construct a toggle link for the alternative
             ViewBag.TitleSortParam = String.IsNullOrEmpty(sortOrder) ? "title_desc" : "";
 
 
-
-
-
-            //if there is a search string
             if (searchString != null)
             {
-                //set page as 1
                 page = 1;
             }
             else
             {
-                //if no search string, set to the current filter
                 searchString = currentFilter;
             }
-
-            //the current filter is now the search string - note kept in view
+  
             ViewBag.CurrentFilter = searchString;
-
 
             List<PersonViewModel> personsList = new List<PersonViewModel>();
 
-            //List<Film> films;
-
-            //Select all films in the db
+            // Get all persons, then overwrite with returned results if a searchString
+            // is specified.
             var persons = from p in db.Persons
                         select p;
 
-            //check if the search string is not empty
+
             if (!String.IsNullOrEmpty(searchString))
             {
-                //if we have a search term, then select where the title contains it
-                //analogous to LIKE %term% in SQL
                 persons = persons.Where(p => p.FirstName.Contains(searchString) || p.LastName.Contains(searchString));
             }
 
@@ -128,9 +115,8 @@ namespace Filmster.Controllers
             List<Person> thesePersons = new List<Person>();
             thesePersons = persons.ToList();
 
-
-
-
+            // Loop through persons results and get viewmodel information from other db entities.
+            // Assign the entities to the new viewmodel and add the viewmodel to the viewmodels list.
             if (thesePersons.Count > 0)
             {
                 PersonViewModel personViewModel;
@@ -149,19 +135,19 @@ namespace Filmster.Controllers
            
             }
 
-            //how many records per page (could also be a param..)
+            // Set the amount of records shown on a page and convert the viewmodel
+            // to an IpagedList object to return to the view.
             int pageSize = 5;
             //if page is null set to 1 otherwise keep page value
             int pageNumber = (page ?? 1);
 
             IPagedList pagedList = personsList.ToPagedList(pageNumber, pageSize);
 
-            //send the updated films list to the view
             return View(pagedList);
 
         }
 
-        // GET: Persons/Details/5
+        // Get persons details by person id, builds a viewmodel for return.
         public ActionResult Details(int? id)
         {
             if (id == null)
@@ -183,7 +169,7 @@ namespace Filmster.Controllers
             List<FilmPersonRole> rolesList = new List<FilmPersonRole>();
             rolesList = db.FilmPersonRoles.ToList();
 
-            // For each role, do stuff if it matches the person id.
+            // IF a role exists for this person, add it to the roles list.
             if (rolesList.Count > 0)
             {
                 foreach(FilmPersonRole role in rolesList)
@@ -216,22 +202,19 @@ namespace Filmster.Controllers
             return View();
         }
 
-        // POST: Persons/Create
-        // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
-        // more details see https://go.microsoft.com/fwlink/?LinkId=317598.
+        // POST: Creates a new person and image record from viewmodel data.
+        // Validates input values and abandons db insert if data is missing or incorrect.
+
         [HttpPost]
         [ValidateAntiForgeryToken]
         public ActionResult Create([Bind(Include = "PersonId,ImageId,FirstName,LastName," +
             "IsActor,IsDirector,Biography")] Person person,
             HttpPostedFileBase upload)
         {
-            //if we have valid data in the form
             if (ModelState.IsValid)
             {
-                //check to see if a file has been uploaded
                 if (upload != null && upload.ContentLength > 0)
                 {
-                    //check to see if a file has been uploaded
                     if (upload.ContentType == "image/jpeg" ||
                         upload.ContentType == "image/jpg" ||
                         upload.ContentType == "image/gif" ||
@@ -239,22 +222,28 @@ namespace Filmster.Controllers
                     {
                         if (Request.Files.Count > 0)
                         {
+                            // If an image is being uploaded then save the image to a temporary folder, 
+                            // convert the image to bytes and assign it to the model for inserting into the db.
+
                             var file = Request.Files[0];
                             {
+                                // Save image to temp folder.
                                 var fileName = Path.GetFileName(file.FileName);
                                 var path = Path.Combine(Server.MapPath("~/ImagesTemp/"), fileName);
                                 file.SaveAs(path);
 
+                                // Convert image to bytes.
                                 Image newImage = Image.FromFile(path);
                                 PersonImage personImage = new PersonImage();
                                 personImage.ImageBytes = personImage.ConvertImageToByteArray(newImage);
 
-
+                                // Insert image into db and return the new image id.
                                 db.PersonImages.Add(personImage);
                                 db.SaveChanges();
                                 int imageId = personImage.ImageId;
                                 person.ImageId = imageId;
 
+                                // Attempt to delete temporary image.
                                 if (System.IO.File.Exists(path))
                                 {
                                     try
@@ -263,6 +252,8 @@ namespace Filmster.Controllers
                                     }
                                     catch (Exception)
                                     {
+                                        // Do nothing, temporary folder will be 
+                                        // cleared when application is re-launched.
 
                                     }
 
@@ -272,11 +263,11 @@ namespace Filmster.Controllers
                     }
                     else
                     {
-                        //construct a message that can be displayed in the view
+                        // Constructs error messages for the view.
                         ViewBag.Message = "Not valid image format";
                     }
                 }
-                //add the person to the database and save
+                // Add the person to the database and save
                 db.Persons.Add(person);
                 db.SaveChanges();
                 return RedirectToAction("Index");
@@ -285,7 +276,7 @@ namespace Filmster.Controllers
             return View(person);
         }
 
-        // GET: Persons/Edit/5
+        // Get viewmodel data for the edit view.
         public ActionResult Edit(int? id)
         {
             if (id == null)
@@ -307,7 +298,8 @@ namespace Filmster.Controllers
             List<FilmPersonRole> rolesList = new List<FilmPersonRole>();
             rolesList = db.FilmPersonRoles.ToList();
 
-            // For each role, do stuff if it matches the person id.
+
+            // IF a role exists for this person, add it to the roles list.
             if (rolesList.Count > 0)
             {
                 foreach (FilmPersonRole role in rolesList)
@@ -334,9 +326,8 @@ namespace Filmster.Controllers
             return View(personViewModel);
         }
 
-        // POST: Persons/Edit/5
-        // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
-        // more details see https://go.microsoft.com/fwlink/?LinkId=317598.
+        // POST: Update person record with new person data from the viewmodel.
+        // Validates input data and aborts the update if data is invalid.
         [HttpPost]
         [ValidateAntiForgeryToken]
         public ActionResult Edit(PersonViewModel personViewModel, HttpPostedFileBase upload)
@@ -345,36 +336,44 @@ namespace Filmster.Controllers
             {
                 personViewModel.ThisPerson.ImageId = personViewModel.ThisPersonImage.ImageId;
 
-                //check to see if a file has been uploaded
                 if (upload != null && upload.ContentLength > 0)
                 {
-                    //check to see if a file has been uploaded
+                  
                     if (upload.ContentType == "image/jpeg" ||
                         upload.ContentType == "image/jpg" ||
                         upload.ContentType == "image/gif" ||
                         upload.ContentType == "image/png")
                     {
-                        //DO SOMETHING WITH THE FILEPATH
-                        //CONVERT IMAGE TO BLOB
+                        // If an image is being uploaded then save the image to a
+                        // temporary folder, convert the image to bytes, save the image
+                        // as a new record and assign its new id to the person model for
+                        // updating the db.
                         if (Request.Files.Count > 0)
                         {
                             var file = Request.Files[0];
                             {
+                                // Save image to temp folder.
                                 var fileName = Path.GetFileName(file.FileName);
                                 var path = Path.Combine(Server.MapPath("~/ImagesTemp/"), fileName);
                                 file.SaveAs(path);
 
+                                // Convert image to bytes.
                                 Image newImage = Image.FromFile(path);
                                 PersonImage personImage = new PersonImage();
                                 personImage.ImageBytes = personImage.ConvertImageToByteArray(newImage);
 
-
+                                // Insert image into db and return the new image id.
                                 db.PersonImages.Add(personImage);
                                 db.SaveChanges();
                                 int imageId = personImage.ImageId;
+
+                                //Get the old person image and delete it.
+                                PersonImage oldPersonImage = db.PersonImages.Where(x => x.ImageId == personViewModel.ThisPersonImage.ImageId).Single();
+                                db.PersonImages.Remove(oldPersonImage);
+
                                 personViewModel.ThisPerson.ImageId = imageId;
 
-
+                                // Attempt to delete temporary image.
                                 if (System.IO.File.Exists(path))
                                 {
                                     try
@@ -383,7 +382,8 @@ namespace Filmster.Controllers
                                     }
                                     catch (Exception)
                                     {
-
+                                        // Do nothing, temporary folder will be cleared
+                                        // when application is re-launched.
                                     }
 
                                 }
@@ -392,11 +392,12 @@ namespace Filmster.Controllers
                     }
                     else
                     {
-                        //construct a message that can be displayed in the view
+                        // Constructs error messages for the view.
                         ViewBag.Message = "Not valid image format";
                     }
                 }
 
+                //Update the db and save.
                 db.Entry(personViewModel.ThisPerson).State = EntityState.Modified;
                 db.SaveChanges();
                 return RedirectToAction("Index");
@@ -404,7 +405,7 @@ namespace Filmster.Controllers
             return View(personViewModel);
         }
 
-        // GET: Persons/Delete/5
+        // GET: Gets the person data in preparation for deletion.
         public ActionResult Delete(int? id)
         {
             if (id == null)
@@ -419,12 +420,28 @@ namespace Filmster.Controllers
             return View(person);
         }
 
-        // POST: Persons/Delete/5
+        // POST: Attempt to delete the person and image.
+        // Any film roles for this persons will also be deleted.
+
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
         public ActionResult DeleteConfirmed(int id)
         {
             Person person = db.Persons.Find(id);
+
+            List<FilmPersonRole> roles = db.FilmPersonRoles.Where(x => x.PersonId == person.PersonId).ToList();
+            PersonImage personImage = db.PersonImages.Where(x => x.ImageId == person.ImageId).Single();
+
+            // Delete the actor/director roles to prevent orphan data.
+            if (roles.Count > 0)
+            {
+                foreach (FilmPersonRole role in roles)
+                {
+                    db.FilmPersonRoles.Remove(role);
+                }
+            }
+
+            db.PersonImages.Remove(personImage);
             db.Persons.Remove(person);
             db.SaveChanges();
             return RedirectToAction("Index");

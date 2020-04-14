@@ -240,7 +240,7 @@ namespace Filmster.Controllers
             return View();
         }
 
-        // POST: Creates a new film record from viewmodel data.
+        // POST: Creates a new film and image record from viewmodel data.
         // Validates input values and abandons db insert if data is missing or incorrect.
         [HttpPost]
         [ValidateAntiForgeryToken]
@@ -450,6 +450,11 @@ namespace Filmster.Controllers
                                 db.FilmImages.Add(filmImage);
                                 db.SaveChanges();
                                 int imageId = filmImage.ImageId;
+
+                                //Get the old film image and delete it.
+                                FilmImage oldFilmImage = db.FilmImages.Where(x => x.ImageId == filmViewModel.ThisFilmImage.ImageId).Single();
+                                db.FilmImages.Remove(oldFilmImage);
+
                                 filmViewModel.ThisFilm.ImageId = imageId;
                  
                                 // Attempt to delete temporary image.
