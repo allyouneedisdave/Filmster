@@ -422,7 +422,6 @@ namespace Filmster.Controllers
 
         // POST: Attempt to delete the person and image.
         // Any film roles for this persons will also be deleted.
-
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
         public ActionResult DeleteConfirmed(int id)

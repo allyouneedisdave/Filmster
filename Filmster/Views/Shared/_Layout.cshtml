@@ -13,6 +13,11 @@
     @Scripts.Render("~/Scripts/Stars/jquery.barrating.min.js")
     <link rel="stylesheet"
           href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.css" />
+
+    <link href="https://fonts.googleapis.com/css2?family=Modak&display=swap" rel="stylesheet" />
+
+    <link href="https://fonts.googleapis.com/css2?family=Arvo:wght@700&display=swap" rel="stylesheet" />
+
     @Styles.Render("~/Scripts/Stars/themes/fontawesome-stars.css")
     @Styles.Render("~/Scripts/Stars/themes/fontawesome-stars-o.css")
 
@@ -20,9 +25,11 @@
     @Scripts.Render("~/Scripts/jquery-ui-1.12.1/jquery-ui.min.js")
     @Styles.Render("~/Scripts/jquery-ui-1.12.1/jquery-ui.min.css")
 
+
     @RenderSection("scripts", required: false)
 </head>
 <body>
+
     <div class="navbar navbar-inverse navbar-fixed-top">
         <div class="container">
             <div class="navbar-header">
@@ -34,7 +41,7 @@
                 @Html.ActionLink("Filmster", "Index", "Home", new { area = "" }, new { @class = "navbar-brand" })
             </div>
             <div class="navbar-collapse collapse">
-                <ul class="nav navbar-nav">
+                <ul class=" nav navbar-nav">
                     <li>@Html.ActionLink("Films", "Index", "Films")</li>
                     <li>@Html.ActionLink("Actors/Directors", "Index", "Persons")</li>
                     <li>@Html.ActionLink("Reviews", "Index", "Reviews")</li>

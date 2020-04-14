@@ -140,12 +140,10 @@
     <Compile Include="App_Start\FilterConfig.cs" />
     <Compile Include="App_Start\RouteConfig.cs" />
     <Compile Include="Controllers\CertificatesController.cs" />
-    <Compile Include="Controllers\FilmImagesController.cs" />
     <Compile Include="Controllers\FilmPersonRolesController.cs" />
     <Compile Include="Controllers\FilmsController.cs" />
     <Compile Include="Controllers\GenresController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
-    <Compile Include="Controllers\PersonImagesController.cs" />
     <Compile Include="Controllers\PersonsController.cs" />
     <Compile Include="Controllers\ReviewsController.cs" />
     <Compile Include="Controllers\UsersController.cs" />
@@ -170,6 +168,9 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
+    <Content Include="ContentImages\exodus-Kodi.jpg" />
+    <Content Include="ContentImages\movie-montage.jpg" />
+    <Content Include="ContentImages\movies.jpg" />
     <Content Include="Content\bootstrap-theme.css" />
     <Content Include="Content\bootstrap-theme.min.css" />
     <Content Include="Content\bootstrap.css" />
@@ -233,8 +234,6 @@
     <Content Include="Views\_ViewStart.cshtml" />
     <Content Include="Views\Shared\Error.cshtml" />
     <Content Include="Views\Shared\_Layout.cshtml" />
-    <Content Include="Views\Home\About.cshtml" />
-    <Content Include="Views\Home\Contact.cshtml" />
     <Content Include="Views\Home\Index.cshtml" />
     <Content Include="Views\Films\Create.cshtml" />
     <Content Include="Views\Films\Delete.cshtml" />
@@ -246,21 +245,6 @@
     <Content Include="Views\Persons\Details.cshtml" />
     <Content Include="Views\Persons\Edit.cshtml" />
     <Content Include="Views\Persons\Index.cshtml" />
-    <Content Include="Views\FilmPersonRoles\Create.cshtml" />
-    <Content Include="Views\FilmPersonRoles\Delete.cshtml" />
-    <Content Include="Views\FilmPersonRoles\Details.cshtml" />
-    <Content Include="Views\FilmPersonRoles\Edit.cshtml" />
-    <Content Include="Views\FilmPersonRoles\Index.cshtml" />
-    <Content Include="Views\FilmImages\Create.cshtml" />
-    <Content Include="Views\FilmImages\Delete.cshtml" />
-    <Content Include="Views\FilmImages\Details.cshtml" />
-    <Content Include="Views\FilmImages\Edit.cshtml" />
-    <Content Include="Views\FilmImages\Index.cshtml" />
-    <Content Include="Views\PersonImages\Create.cshtml" />
-    <Content Include="Views\PersonImages\Delete.cshtml" />
-    <Content Include="Views\PersonImages\Details.cshtml" />
-    <Content Include="Views\PersonImages\Edit.cshtml" />
-    <Content Include="Views\PersonImages\Index.cshtml" />
     <Content Include="Views\Users\Create.cshtml" />
     <Content Include="Views\Users\Delete.cshtml" />
     <Content Include="Views\Users\Details.cshtml" />
@@ -282,6 +266,11 @@
     <Content Include="Views\Genres\Details.cshtml" />
     <Content Include="Views\Genres\Edit.cshtml" />
     <Content Include="Views\Genres\Index.cshtml" />
+    <Content Include="Views\FilmPersonRoles\Create.cshtml" />
+    <Content Include="Views\FilmPersonRoles\Delete.cshtml" />
+    <Content Include="Views\FilmPersonRoles\Details.cshtml" />
+    <Content Include="Views\FilmPersonRoles\Edit.cshtml" />
+    <Content Include="Views\FilmPersonRoles\Index.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

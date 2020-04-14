@@ -111,6 +111,9 @@ namespace Filmster.Controllers
         {
             Genre genre = db.Genres.Find(id);
 
+
+            // If this genre is assigned to a minimum of one film
+            // then abort the deletion to prevent corrupt data.
             List<Film> films = db.Films.Where(x => x.GenreId == id).ToList();
 
             if (films.Count > 0)

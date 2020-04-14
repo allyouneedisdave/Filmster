@@ -15,7 +15,7 @@ namespace Filmster.Controllers
     {
         private DBContext db = new DBContext();
 
-        // GET: Users
+        // Gets a list of all users and creates a users view model list for return.
         public ActionResult Index()
         {
             List<UserViewModel> userViewModelList = new List<UserViewModel>();
@@ -37,7 +37,8 @@ namespace Filmster.Controllers
             return View(userViewModelList);
         }
 
-        // GET: Users/Details/5
+        // Gets the user details and presents them as a view model, 
+        // which includes a list of all reviews for the specified user.
         public ActionResult Details(int? id)
         {
             if (id == null)
@@ -64,8 +65,6 @@ namespace Filmster.Controllers
         }
 
         // POST: Users/Create
-        // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
-        // more details see https://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
         public ActionResult Create([Bind(Include = "UserId,username")] User user)
@@ -80,7 +79,7 @@ namespace Filmster.Controllers
             return View(user);
         }
 
-        // GET: Users/Edit/5
+        // GET: Returns a view model for the user for the edit view.
         public ActionResult Edit(int? id)
         {
             if (id == null)
@@ -100,9 +99,7 @@ namespace Filmster.Controllers
             return View(userViewModel);
         }
 
-        // POST: Users/Edit/5
-        // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
-        // more details see https://go.microsoft.com/fwlink/?LinkId=317598.
+        // Attempts to edit the user record from the user view model data.
         [HttpPost]
         [ValidateAntiForgeryToken]
         public ActionResult Edit(UserViewModel userViewModel)
@@ -116,7 +113,7 @@ namespace Filmster.Controllers
             return View(userViewModel);
         }
 
-        // GET: Users/Delete/5
+        // Gets the user record data in preperation for deletion.
         public ActionResult Delete(int? id)
         {
             if (id == null)
@@ -134,13 +131,15 @@ namespace Filmster.Controllers
             return View(user);
         }
 
-        // POST: Users/Delete/5
+        // POST: Attempt to delete the user
+        // Any reviews for this user will be deleted.
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
         public ActionResult DeleteConfirmed(int id)
         {
             User user = db.Users.Find(id);
 
+            // Delete reviews from this user to prevent orphan data.
             List<Review> reviews = db.Reviews.Where(x => x.UserId == user.UserId).ToList();
 
             if (reviews.Count > 0)

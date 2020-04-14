@@ -15,7 +15,13 @@ namespace Filmster.Controllers
     {
         private DBContext db = new DBContext();
 
-        // GET: Reviews
+
+        // No search functionality required for reviews
+        // as they films can be searched for in the films index
+        // and reviews can be accessed from there.
+
+
+        // GET: Reviews and records to creat a review viewmodel list for return.
         public ActionResult Index()
         {
             List<ReviewViewModel> reviewViewModelList = new List<ReviewViewModel>();
@@ -44,7 +50,7 @@ namespace Filmster.Controllers
             return View(reviewViewModelList);
         }
 
-        // GET: Reviews/Details/5
+        // GET: Review details to create a review view model for return.
         public ActionResult Details(int? id)
         {
             if (id == null)
@@ -72,7 +78,7 @@ namespace Filmster.Controllers
        
         }
 
-        // GET: Reviews/Create
+        // GET: Get film data to populate the view for creating a review.
         public ActionResult Create(int? filmId)
         {
             ReviewViewModel reviewViewModel = new ReviewViewModel();
@@ -83,7 +89,7 @@ namespace Filmster.Controllers
             
             if (filmId == null || filmId == 0)
             {
-                //Return to home
+                // Return to films index
                 return View("~/Views/Films/index.cshtml");
             }
             else
@@ -91,7 +97,7 @@ namespace Filmster.Controllers
                 reviewViewModel.thisFilm = db.Films.Where(x => x.FilmId == filmId).Single();
             }
 
-            //Get a list of user names for drop down selection
+            // Get a list of user names for drop down selection
             var userQuery = from u in db.Users
                             orderby u.Username
                             select u;
@@ -100,9 +106,9 @@ namespace Filmster.Controllers
             return View(reviewViewModel);
         }
 
-        // POST: Reviews/Create
-        // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
-        // more details see https://go.microsoft.com/fwlink/?LinkId=317598.
+        // POST: Creates a new review from viewmodel data.
+        // Validates input values and abandons db insert if data is missing or incorrect.
+
         [HttpPost]
         [ValidateAntiForgeryToken]
         public ActionResult Create(ReviewViewModel reviewViewModel)
@@ -111,6 +117,7 @@ namespace Filmster.Controllers
             reviewViewModel.thisReview.UserId = Int32.Parse(Request["Users"]);
             reviewViewModel.thisReview.FilmId = (int)reviewViewModel.thisFilm.FilmId;
 
+            // Sets the created date automatically.
             reviewViewModel.thisReview.CreatedDate = DateTime.Now;
 
             reviewViewModel.thisReview.Rating = Int32.Parse(Request["Rating"]);
@@ -122,7 +129,7 @@ namespace Filmster.Controllers
 
         }
 
-        // GET: Reviews/Edit/5
+        // Get viewmodel data for the edit view.
         public ActionResult Edit(int? id)
         {
             if (id == null)
@@ -150,14 +157,12 @@ namespace Filmster.Controllers
             return View(reviewViewModel);
         }
 
-        // POST: Reviews/Edit/5
-        // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
-        // more details see https://go.microsoft.com/fwlink/?LinkId=317598.
+        // POST: Update review record with new review data from the viewmodel.
+        // Validates input data and aborts the update if data is invalid.
         [HttpPost]
         [ValidateAntiForgeryToken]
         public ActionResult Edit(ReviewViewModel reviewViewModel)
         {
-
             reviewViewModel.thisReview.Rating = Int32.Parse(Request["Rating"]);
 
             if (ModelState.IsValid)
@@ -169,7 +174,7 @@ namespace Filmster.Controllers
             return View(reviewViewModel);
         }
 
-        // GET: Reviews/Delete/5
+        // Gets the review data as a view model in preparation for deletion.
         public ActionResult Delete(int? id)
         {
             if (id == null)
@@ -197,7 +202,7 @@ namespace Filmster.Controllers
             return View(reviewViewModel);
         }
 
-        // POST: Reviews/Delete/5
+        // POST: Attempt to delete the review.
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
         public ActionResult DeleteConfirmed(int id)
