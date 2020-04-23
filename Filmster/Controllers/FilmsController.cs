@@ -292,7 +292,7 @@ namespace Filmster.Controllers
                                 {
                                     System.IO.File.Delete(path);
                                 }
-                                catch (Exception)
+                                catch (Exception thisException)
                                 {
                                     // Do nothing, temporary folder will be       
                                     // cleared when application is re-launched.      

@@ -27,7 +27,9 @@
                 //from the JSON results
                 window.location = '@Url.Action("Details")'
                     + '/' + ui.item.id
+                
             }
+                
         });
     })
 </script>
@@ -37,11 +39,13 @@
 {
     if (ViewBag.ErrorMessage == "An image must be uploaded.")
     {
-        <script>window.alert("An image must be uploaded.");</script>
+        <script>window.alert("An image must be uploaded."); console.log("image not uploaded");
+  
+    </script>
     }
     else if (ViewBag.ErrorMessage == "A valid image image format was not uploaded.")
     {
-        <script>window.alert("A valid image image format was not uploaded.");</script>
+        <script>window.alert("A valid image image format was not uploaded."); console.log("valid image not uploaded");</script>
     }
     else if (ViewBag.ErrorMessage == "Please select a film to create a review.")
     {
@@ -105,6 +109,7 @@ ViewBag.CurrentFilter as string)
             </td>
             <td>
                 @Html.DisplayFor(modelItem => item.ThisFilm.Title)
+                
             </td>
             <td>
                 @Html.DisplayFor(modelItem => item.ThisCertificate.CertificateName)
