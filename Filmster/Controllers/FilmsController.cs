@@ -47,9 +47,9 @@ namespace Filmster.Controllers
             // from the values sent in the ActionResult arguments.
             ViewBag.CurrentSort = sortOrder;
 
-            if(errorMessage == "Please select a film to create a review.")
+            if(errorMessage != null)
             {
-                ViewBag.ErrorMessage = "Please select a film to create a review.";
+                ViewBag.ErrorMessage = errorMessage;
             }
 
             ViewBag.TitleSortParam = String.IsNullOrEmpty(sortOrder) ? "title_desc" : "";
@@ -268,53 +268,59 @@ namespace Filmster.Controllers
                         if (Request.Files.Count > 0)
                         {
                             var file = Request.Files[0];
+
+                            // Save image to temp folder.      
+                            var fileName = Path.GetFileName(file.FileName);
+                            var path = Path.Combine(Server.MapPath("~/ImagesTemp/"), fileName);
+                            file.SaveAs(path);
+
+                            // Convert image to bytes.      
+                            Image newImage = Image.FromFile(path);
+                            FilmImage filmImage = new FilmImage();
+                            filmImage.ImageBytes = filmImage.ConvertImageToByteArray(newImage);
+
+                            // Insert image into db and return the new image id.      
+                            db.FilmImages.Add(filmImage);
+                            db.SaveChanges();
+                            int imageId = filmImage.ImageId;
+                            film.ImageId = imageId;
+
+                            // Attempt to delete temporary image.      
+                            if (System.IO.File.Exists(path))
                             {
-                                // Save image to temp folder.
-                                var fileName = Path.GetFileName(file.FileName);
-                                var path = Path.Combine(Server.MapPath("~/ImagesTemp/"), fileName);
-                                file.SaveAs(path);
-
-                                // Convert image to bytes.
-                                Image newImage = Image.FromFile(path);
-                                FilmImage filmImage = new FilmImage();
-                                filmImage.ImageBytes = filmImage.ConvertImageToByteArray(newImage);
-
-                                // Insert image into db and return the new image id.
-                                db.FilmImages.Add(filmImage);
-                                db.SaveChanges();
-                                int imageId = filmImage.ImageId;
-                                film.ImageId = imageId;
-
-                                // Attempt to delete temporary image.
-                                if (System.IO.File.Exists(path))
+                                try
                                 {
-                                    try
-                                    {
-                                        System.IO.File.Delete(path);
-                                    }
-                                    catch (Exception)
-                                    {
-                                        // Do nothing, temporary folder will be 
-                                        // cleared when application is re-launched.
-                                    }
+                                    System.IO.File.Delete(path);
+                                }
+                                catch (Exception)
+                                {
+                                    // Do nothing, temporary folder will be       
+                                    // cleared when application is re-launched.      
                                 }
                             }
+                            // Add the film to the database and save.
+                            film.GenreId = Int32.Parse(Request["Genres"]);
+                            film.CertificateId = Int32.Parse(Request["Certificates"]);
+
+                            db.Films.Add(film);
+                            db.SaveChanges();
+
                         }
                     }
                     else
                     {
                         // Constructs error messages for the view.
-                        ViewBag.Message = "Not valid image format";
+                        ViewBag.ErrorMessage = "A valid image image format was not uploaded.";
                     }
                 }
-                // Add the film to the database and save.
-                film.GenreId = Int32.Parse(Request["Genres"]);
-                film.CertificateId = Int32.Parse(Request["Certificates"]);
+                else
+                {
+                    // Constructs error messages for the view.
+                    ViewBag.ErrorMessage = "An image must be uploaded.";
+                }
+  
+                return RedirectToAction("Index", "Films", new { errorMessage = ViewBag.ErrorMessage });
 
-                db.Films.Add(film);
-                db.SaveChanges();
-                
-                return RedirectToAction("Index");
             }
 
             return View(film);

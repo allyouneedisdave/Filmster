@@ -22,7 +22,25 @@
     })
 </script>
 
+<!--Validated for any error message passed into the viewbag from a controller and display if present.-->
+@if (ViewBag.ErrorMessage != null)
+{
+    if (ViewBag.ErrorMessage == "An image must be uploaded.")
+    {
+        <script>window.alert("An image must be uploaded.");</script>
+    }
+    else if (ViewBag.ErrorMessage == "A valid image image format was not uploaded.")
+    {
+        <script>window.alert("A valid image image format was not uploaded.");</script>
+    }
+    else if (ViewBag.ErrorMessage == "Please select a film to create a review.")
+    {
+        <script>window.alert("Please select a film to create a review.");</script>
+    }
 
+
+
+}
 
 <h2 class="h2-adjusted">Actors/Directors</h2>
 
@@ -65,11 +83,11 @@ ViewBag.CurrentFilter as string)
                              })
         </th>
         @*<th>
-            @Html.DisplayNameFor(model => model.IsActor)
-        </th>
-        <th>
-            @Html.DisplayNameFor(model => model.IsDirector)
-        </th>*@
+                @Html.DisplayNameFor(model => model.IsActor)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.IsDirector)
+            </th>*@
         <th>
             @Html.DisplayNameFor(model => model.FirstOrDefault().ThisPerson.Biography)
         </th>
@@ -112,7 +130,7 @@ ViewBag.CurrentFilter as string)
 </table>
 
 Page @(Model.PageCount < Model.PageNumber ?
-   0 : Model.PageNumber) of @Model.PageCount
+0 : Model.PageNumber) of @Model.PageCount
 
 @Html.PagedListPager(Model, page => Url.Action("Index",
     new

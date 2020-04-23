@@ -32,9 +32,24 @@
     })
 </script>
 
-@if (ViewBag.ErrorMessage == "Please select a film to create a review.")
+<!--Validated for any error message passed into the viewbag from a controller and display if present.-->
+@if (ViewBag.ErrorMessage != null)
 {
-    <script>window.alert("Please select a film to create a review.");</script>
+    if (ViewBag.ErrorMessage == "An image must be uploaded.")
+    {
+        <script>window.alert("An image must be uploaded.");</script>
+    }
+    else if (ViewBag.ErrorMessage == "A valid image image format was not uploaded.")
+    {
+        <script>window.alert("A valid image image format was not uploaded.");</script>
+    }
+    else if (ViewBag.ErrorMessage == "Please select a film to create a review.")
+    {
+        <script>window.alert("Please select a film to create a review.");</script>
+    }
+
+
+
 }
 
 <h2 class="h2-adjusted">Films</h2>
@@ -47,7 +62,7 @@
 {
     <p>
         Find by title: @Html.TextBox("searchString",
-       ViewBag.CurrentFilter as string)
+ViewBag.CurrentFilter as string)
         <input type="submit" value="Search" />
     </p>
 }
@@ -58,7 +73,7 @@
             @Html.DisplayNameFor(model => model.FirstOrDefault().ThisFilmImage.ImageBytes)
         </th>
         <th>
-            @Html.ActionLink("Film Title", "Index", "",
+            @Html.ActionLink("Film Title", "Index",
                         new
                              {
                                  sortOrder = ViewBag.TitleSortParam,
@@ -112,7 +127,7 @@
 </table>
 
 Page @(Model.PageCount < Model.PageNumber ?
-   0 : Model.PageNumber) of @Model.PageCount
+0 : Model.PageNumber) of @Model.PageCount
 
 @Html.PagedListPager(Model, page => Url.Action("Index",
     new

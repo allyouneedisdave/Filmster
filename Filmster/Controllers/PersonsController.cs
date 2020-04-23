@@ -44,7 +44,7 @@ namespace Filmster.Controllers
         // Utilises arguments to return a sorting order, page of results
         // and searched results. The sort order is tracked by the viewbag.
         // A column clicked argument is also passed to sort by different columns.
-        public ActionResult Index(string sortOrder, string searchString, string columnClicked,
+        public ActionResult Index(string errorMessage, string sortOrder, string searchString, string columnClicked,
                             string currentFilter, int? page)
         {
             // This section sets the search, ordering and pagination variables
@@ -52,6 +52,11 @@ namespace Filmster.Controllers
             ViewBag.CurrentSort = sortOrder;
 
             ViewBag.TitleSortParam = String.IsNullOrEmpty(sortOrder) ? "title_desc" : "";
+
+            if (errorMessage != null)
+            {
+                ViewBag.ErrorMessage = errorMessage;
+            }
 
 
             if (searchString != null)
@@ -226,51 +231,57 @@ namespace Filmster.Controllers
                             // convert the image to bytes and assign it to the model for inserting into the db.
 
                             var file = Request.Files[0];
-                            {
-                                // Save image to temp folder.
-                                var fileName = Path.GetFileName(file.FileName);
-                                var path = Path.Combine(Server.MapPath("~/ImagesTemp/"), fileName);
-                                file.SaveAs(path);
+                            
+                            // Save image to temp folder.    
+                            var fileName = Path.GetFileName(file.FileName);    
+                            var path = Path.Combine(Server.MapPath("~/ImagesTemp/"), fileName);    
+                            file.SaveAs(path);    
 
-                                // Convert image to bytes.
-                                Image newImage = Image.FromFile(path);
-                                PersonImage personImage = new PersonImage();
-                                personImage.ImageBytes = personImage.ConvertImageToByteArray(newImage);
+                            // Convert image to bytes.    
+                            Image newImage = Image.FromFile(path);    
+                            PersonImage personImage = new PersonImage();    
+                            personImage.ImageBytes = personImage.ConvertImageToByteArray(newImage);    
 
-                                // Insert image into db and return the new image id.
-                                db.PersonImages.Add(personImage);
-                                db.SaveChanges();
-                                int imageId = personImage.ImageId;
-                                person.ImageId = imageId;
+                            // Insert image into db and return the new image id.    
+                            db.PersonImages.Add(personImage);    
+                            db.SaveChanges();    
+                            int imageId = personImage.ImageId;    
+                            person.ImageId = imageId;    
 
-                                // Attempt to delete temporary image.
-                                if (System.IO.File.Exists(path))
-                                {
-                                    try
-                                    {
-                                        System.IO.File.Delete(path);
-                                    }
-                                    catch (Exception)
-                                    {
-                                        // Do nothing, temporary folder will be 
-                                        // cleared when application is re-launched.
+                            // Attempt to delete temporary image.    
+                            if (System.IO.File.Exists(path))    
+                            {    
+                                try    
+                                {    
+                                    System.IO.File.Delete(path);    
+                                }    
+                                catch (Exception)    
+                                {    
+                                    // Do nothing, temporary folder will be     
+                                    // cleared when application is re-launched.    
 
-                                    }
+                                }    
 
-                                }
                             }
+                            // Add the person to the database and save
+                            db.Persons.Add(person);
+                            db.SaveChanges();
+
                         }
                     }
                     else
                     {
                         // Constructs error messages for the view.
-                        ViewBag.Message = "Not valid image format";
+                        ViewBag.ErrorMessage = "A valid image image format was not uploaded.";
                     }
                 }
-                // Add the person to the database and save
-                db.Persons.Add(person);
-                db.SaveChanges();
-                return RedirectToAction("Index");
+                else
+                {
+                    // Constructs error messages for the view.
+                    ViewBag.ErrorMessage = "An image must be uploaded.";
+                }
+
+                return RedirectToAction("Index", "Persons", new { errorMessage = ViewBag.ErrorMessage });
             }
 
             return View(person);
