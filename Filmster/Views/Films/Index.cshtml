@@ -7,8 +7,13 @@
     ViewBag.Title = "Index";
 }
 
+
+
+
 <script type="text/javascript">
     $(document).ready(function () {
+
+
         //find the control with name searchString
         //and apply autocomplete plugin
         $("[name='searchString']").autocomplete({
@@ -27,6 +32,11 @@
     })
 </script>
 
+@if (ViewBag.ErrorMessage == "Please select a film to create a review.")
+{
+    <script>window.alert("Please select a film to create a review.");</script>
+}
+
 <h2 class="h2-adjusted">Films</h2>
 
 <p>
@@ -37,7 +47,7 @@
 {
     <p>
         Find by title: @Html.TextBox("searchString",
-                      ViewBag.CurrentFilter as string)
+       ViewBag.CurrentFilter as string)
         <input type="submit" value="Search" />
     </p>
 }
@@ -48,9 +58,12 @@
             @Html.DisplayNameFor(model => model.FirstOrDefault().ThisFilmImage.ImageBytes)
         </th>
         <th>
-            @Html.ActionLink("Film Title", "Index",
-                        new { sortOrder = ViewBag.TitleSortParam,
-                            currentFilter = ViewBag.CurrentFilter })
+            @Html.ActionLink("Film Title", "Index", "",
+                        new
+                             {
+                                 sortOrder = ViewBag.TitleSortParam,
+                            currentFilter = ViewBag.CurrentFilter
+                             })
         </th>
         <th>
             @Html.DisplayNameFor(model => model.FirstOrDefault().ThisCertificate.CertificateName)
@@ -61,44 +74,45 @@
         <th>
             @Html.DisplayNameFor(Model => Model.FirstOrDefault().averageReview)
         </th>
-        
+
         <th></th>
     </tr>
 
-@foreach (var item in Model) {
-    <tr>
-        <td>
-            @if (item.ThisFilmImage.ImageBytes != null)
-            {
-                //Convert the image bytes into a png for displaying on the page.
-                <img height="100px"; src="@String.Format("data:image/png;base64,{0}", Convert.ToBase64String(item.ThisFilmImage.ImageBytes))" />
-            }
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.ThisFilm.Title)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.ThisCertificate.CertificateName)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.ThisFilm.Synopsis)
-        </td>
-        <td>
-            @Html.DisplayFor(modelitem => item.averageReview)/10
-        </td>
+    @foreach (var item in Model)
+    {
+        <tr>
+            <td>
+                @if (item.ThisFilmImage.ImageBytes != null)
+                {
+                    //Convert the image bytes into a png for displaying on the page.
+                    <img height="100px" ; src="@String.Format("data:image/png;base64,{0}", Convert.ToBase64String(item.ThisFilmImage.ImageBytes))" />
+                }
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.ThisFilm.Title)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.ThisCertificate.CertificateName)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.ThisFilm.Synopsis)
+            </td>
+            <td>
+                @Html.DisplayFor(modelitem => item.averageReview)/10
+            </td>
 
-        <td>
-            @Html.ActionLink("Edit", "Edit", new { id=item.ThisFilm.FilmId }) |
-            @Html.ActionLink("Details", "Details", new { id=item.ThisFilm.FilmId }) |
-            @Html.ActionLink("Delete", "Delete", new { id=item.ThisFilm.FilmId })
-        </td>
-    </tr>
-}
+            <td>
+                @Html.ActionLink("Edit", "Edit", new { id = item.ThisFilm.FilmId }) |
+                @Html.ActionLink("Details", "Details", new { id = item.ThisFilm.FilmId }) |
+                @Html.ActionLink("Delete", "Delete", new { id = item.ThisFilm.FilmId })
+            </td>
+        </tr>
+    }
 
 </table>
 
 Page @(Model.PageCount < Model.PageNumber ?
-        0 : Model.PageNumber) of @Model.PageCount
+   0 : Model.PageNumber) of @Model.PageCount
 
 @Html.PagedListPager(Model, page => Url.Action("Index",
     new

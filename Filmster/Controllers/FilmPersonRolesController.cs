@@ -296,7 +296,7 @@ namespace Filmster.Controllers
             FilmPersonRole filmPersonRole = db.FilmPersonRoles.Find(id);
             db.FilmPersonRoles.Remove(filmPersonRole);
             db.SaveChanges();
-            return RedirectToAction("Index");
+            return RedirectToAction("Index", "Films");
         }
 
         protected override void Dispose(bool disposing)

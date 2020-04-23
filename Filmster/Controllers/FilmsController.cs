@@ -39,13 +39,18 @@ namespace Filmster.Controllers
         // Get films for the index view and builds a list of film viewmodels to return.
         // Utilises arguments to return a sorting order, page of results
         // and searched results. The sort order is tracked by the viewbag.
-        public ActionResult Index(string sortOrder, string searchString,
+        public ActionResult Index(string errorMessage, string sortOrder, string searchString,
                             string currentFilter, int? page)
         {
 
             // This section sets the search, ordering and pagination variables
             // from the values sent in the ActionResult arguments.
             ViewBag.CurrentSort = sortOrder;
+
+            if(errorMessage == "Please select a film to create a review.")
+            {
+                ViewBag.ErrorMessage = "Please select a film to create a review.";
+            }
 
             ViewBag.TitleSortParam = String.IsNullOrEmpty(sortOrder) ? "title_desc" : "";
 

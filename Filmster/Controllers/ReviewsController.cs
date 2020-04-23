@@ -90,7 +90,9 @@ namespace Filmster.Controllers
             if (filmId == null || filmId == 0)
             {
                 // Return to films index
-                return View("~/Views/Films/index.cshtml");
+              
+                return RedirectToAction("Index", "Films", new { errorMessage = "Please select a film to create a review." });
+                //return View("~/Views/Films/index.cshtml");
             }
             else
             {

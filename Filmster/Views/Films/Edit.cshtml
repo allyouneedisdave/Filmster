@@ -96,6 +96,7 @@
         </div>
     </div>
 
+    <hr />
 
     <h5>Actors</h5>
     <p>@Html.ActionLink("Add An Actor", "Create", "FilmPersonRoles", new { filmId = Model.ThisFilm.FilmId, personId = "0", isActor = true }, null)</p>
@@ -103,11 +104,11 @@
     {
         if (role.ThisFilmPersonRole.IsActor == true)
         {
-            <dd>
+<dd>
 
-                @Html.ActionLink($"{role.ThisPerson.FirstName} {role.ThisPerson.LastName}", "Details", "Persons", new { id = role.ThisPerson.PersonId }, null)
+    @Html.ActionLink($"{role.ThisPerson.FirstName} {role.ThisPerson.LastName}", "Details", "Persons", new { id = role.ThisPerson.PersonId }, null) - @Html.ActionLink("Remove This Role", "Delete", "FilmPersonRoles", new { id = role.ThisFilmPersonRole.RoleId }, null)
 
-            </dd>
+</dd>
 
             <dd>
                 <img height="100px" ; src="@String.Format("data:image/png;base64,{0}", Convert.ToBase64String(role.ThisPersonImage.ImageBytes))" />
@@ -115,6 +116,7 @@
 
         }
     }
+    <hr />
     <h5>Directors</h5>
     <p>@Html.ActionLink("Add A Director", "Create", "FilmPersonRoles", new { filmId = Model.ThisFilm.FilmId, personId = "0", isActor = false }, null)</p>
     @foreach (var role in Model.ThisFilmPersonRoleViewModel)
